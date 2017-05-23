@@ -1,9 +1,4 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
-package wiki.parser;
+package edu.illinois.cs.cogcomp.wikiparser.wikiparse;
 
 import java.io.*;
 import java.util.*;
@@ -11,8 +6,8 @@ import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import utils.FileUtils;
-import utils.Pair;
+import edu.illinois.cs.cogcomp.wikiparser.utils.FileUtils;
+import edu.illinois.cs.cogcomp.wikiparser.utils.Pair;
 
 /**
  *
@@ -99,7 +94,7 @@ public class WikiParser {
         *                 the paragraphs are kept as they are and are separated by an empty line.  
         */
         StringBuilder cleanText = new StringBuilder();
-	Map<Pair<Integer, Integer>, String> offsets2Title = new HashMap<>();
+	Map<Pair<Integer, Integer>, String> offsets2Title = new HashMap();
         Pattern linkPattern = Pattern.compile("(<a[^>]+>.+?</a>)",  Pattern.CASE_INSENSITIVE|Pattern.DOTALL);
 	Matcher matcher = linkPattern.matcher(markedupText);
         int len = markedupText.length();
@@ -125,14 +120,14 @@ public class WikiParser {
     public static List<WikiPage> breakDocs(String filename){
         /**
          * Takes the name of the file to parse as input
-         * Returns: a list of wikidata objects with the required data fields
+         * Returns: a list of WikiPage objects with the required data fields
          */
         String text = null;
         text = FileUtils.readFileToString(filename);
         if(text == null) return null;
         
         String [] docs = text.split("</doc>");
-        List<WikiPage> data = new ArrayList<>();
+        List<WikiPage> data = new ArrayList();
         for(int i = 0; i < docs.length; i++){ // Last element is an empty string - ignore it
             String doc = docs[i];
             if (!doc.trim().isEmpty()){
@@ -164,8 +159,10 @@ public class WikiParser {
                 doctext = cleanText2Offset.getFirst().toString();
 
                 Map<Pair<Integer, Integer>, String> hyperlinks = cleanText2Offset.getSecond();
-                
-                data.add(new WikiPage(wikiTitle, pageTitle, doctext, curId, hyperlinks));
+                WikiPage wp = new WikiPage(wikiTitle, pageTitle, curId);
+                wp.setText(doctext);
+                wp.setLinks(hyperlinks);
+                data.add(wp);
             }
         }
         
@@ -178,9 +175,8 @@ public class WikiParser {
      * @param args the command line arguments
      */
     public static void main(String[] args) {      
-        String filename = "C:\\Users\\Reuben-PC\\Desktop\\test.txt";
-        //String filename = "C:\\Users\\Reuben-PC\\Desktop\\test2.txt";
-        List<WikiPage> res = breakDocs(filename);
+        List<WikiPage> res = breakDocs(args[0]); // Path of the required file will passed via the terminal
+        WikiPage data = res.get(0);
     }
     
 }
