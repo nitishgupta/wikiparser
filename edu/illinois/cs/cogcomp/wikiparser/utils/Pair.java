@@ -1,4 +1,4 @@
-package utils;
+package edu.illinois.cs.cogcomp.wikiparser.utils;
 
 /**
  * @author Reuben-PC
