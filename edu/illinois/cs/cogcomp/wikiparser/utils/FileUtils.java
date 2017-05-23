@@ -1,9 +1,4 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
-package utils;
+package edu.illinois.cs.cogcomp.wikiparser.utils;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -25,7 +20,7 @@ import org.slf4j.LoggerFactory;
  * @author Reuben-PC
  */
 public class FileUtils {
-    private final static Logger logger = LoggerFactory.getLogger(FileUtils.class);
+    final static Logger logger = LoggerFactory.getLogger(FileUtils.class);
 
     private static String getTextFromFile(String filename, String charset) {
         try {
