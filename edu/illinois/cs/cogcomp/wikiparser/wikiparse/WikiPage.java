@@ -1,7 +1,7 @@
-package wiki.parser;
+package edu.illinois.cs.cogcomp.wikiparser.wikiparse;
 
 import java.util.*;
-import utils.Pair;
+import edu.illinois.cs.cogcomp.wikiparser.utils.Pair;
 
 /**
  *
@@ -10,18 +10,26 @@ import utils.Pair;
  * Data Structure to hold all of the required data fields of a wiki page
  */
 public class WikiPage {
-    private final String wikiTitle;
-    private final String pageTitle;
-    private final int curId;
-    private final String text;
-    private final Map<Pair<Integer, Integer>, String> hyperlinks;
+    private String wikiTitle;  // This is the title in the hyperlink with underscores and decoded url
+    private String pageTitle;  // Title of the page visible in the Wikipedia webpage.  This includes spaces.
+    private Integer curId;  // Integer ID that is unique to every wikipedia page
+    private String text;  // Relevant text in the page.  Sentences in the same paragraphs are separated by spaces and paragraphs are separated by a new line
+    private Map<Pair<Integer, Integer>, String> hyperlinks;  // Internal wiki links in the page.  The first integer is the start and the second is the end char offset in the text field.  String is the link itself.
     
-    public WikiPage(String wikiTitle, String pageTitle, String text, int curId, Map<Pair<Integer, Integer>, String> hyperlinks){
+    public WikiPage(){
+        this.wikiTitle = null;
+        this.pageTitle = null;
+        this.text = null;
+        this.curId = null;
+        this.hyperlinks = null;
+    }
+    
+    public WikiPage(String wikiTitle, String pageTitle, Integer curId){
         this.wikiTitle = wikiTitle;
         this.pageTitle = pageTitle;
-        this.text = text;
         this.curId = curId;
-        this.hyperlinks = hyperlinks;
+        this.text = null;
+        this.hyperlinks = null;
     }
     
     public String getWikiTitle(){
@@ -42,5 +50,25 @@ public class WikiPage {
     
     public Map<Pair<Integer, Integer>, String> getHyperlinks(){
         return this.hyperlinks;
+    }
+    
+    public void setWikiTitle(String wikiTitle){
+        this.wikiTitle = wikiTitle;
+    }
+    
+    public void setPageTitle(String pageTitle){
+        this.pageTitle = pageTitle;
+    }
+    
+    public void setCurId(Integer curId){
+        this.curId = curId;
+    }
+    
+    public void setText(String text){
+        this.text = text;
+    }
+    
+    public void setLinks(Map<Pair<Integer, Integer>, String> hyperlinks){
+        this.hyperlinks = hyperlinks;
     }
 }
