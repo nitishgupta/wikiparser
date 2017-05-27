@@ -6,7 +6,7 @@ package edu.illinois.cs.cogcomp.wikiparser.utils;
  * @param <V> 
  * Templated pair class
  */
-public class Pair<K, V> {
+public class Pair<K, V> implements java.io.Serializable {
     private final K first;
     private final V second;
 
