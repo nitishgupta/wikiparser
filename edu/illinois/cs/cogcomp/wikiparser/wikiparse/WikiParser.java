@@ -12,10 +12,22 @@ import edu.illinois.cs.cogcomp.wikiparser.utils.Pair;
 /**
  *
  * @author Reuben-PC
+ * 
+ * This class implements functions to parse a single wiki text file into the required 
+ * fields and create a list of WikiPage objects depending on the number of articles 
+ * in the text file
  */
-public class WikiParser {
+public class WikiParser implements Runnable {
     
     private static Logger logger;
+    public String infile;
+    public String outfile;
+    
+    public WikiParser(String infile, String outfile, Logger logger){
+        this.logger = logger;
+        this.infile = infile;
+        this.outfile = outfile;
+    }
     
     private static String fileToString (String filename) throws IOException{
         /**
@@ -169,14 +181,13 @@ public class WikiParser {
         return data;
     }
     
-    
-
-    /**
-     * @param args the command line arguments
-     */
-    public static void main(String[] args) {      
-        List<WikiPage> res = breakDocs(args[0]); // Path of the required file will passed via the terminal
-        WikiPage data = res.get(0);
-    }
+    public void run(){
+        try{
+            List<WikiPage> res = breakDocs(this.infile);
+            Serialize.serialize(res, this.outfile);
+        }catch(Exception e){
+            logger.severe("Wiki Parsing failed : \nInFile : " + infile + "\nOutfile : " + outfile);
+        }
+    }   
     
 }
