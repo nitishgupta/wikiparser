@@ -54,7 +54,7 @@
                 <manifest>
                   <addClasspath>true</addClasspath>
                   <classpathPrefix>lib/</classpathPrefix>
-                  <mainClass>edu.illinois.cs.cogcomp.wikiparser.wikiparse.WikiParser</mainClass>
+                  <mainClass>edu.illinois.cs.cogcomp.wikiparser.wikiparse.WikiExtractParser</mainClass>
                 </manifest>
               </archive>
             </configuration>
