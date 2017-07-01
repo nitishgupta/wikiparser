@@ -21,8 +21,8 @@ import java.util.logging.SimpleFormatter;
 public class WikiExtractParser {
     private Logger logger = Logger.getLogger("WikiExtractParser");
     public String logfile = System.getProperty("user.dir") + "/ExtractedWiki.log";
-    public static final String WikiDirectory = "C:\\Users\\Reuben-PC\\Desktop\\test";
-    public static final String outputFile = "C:\\tmp\\wikipage";
+    public static String WikiDirectory;
+    public static String OutputFile;
     private FileHandler fh;
     private ThreadPoolExecutor parser = null;
     
@@ -73,7 +73,7 @@ public class WikiExtractParser {
             totalFiles ++;
             File file = i.next();
             String infilepath = file.toString();
-            String outfilepath = outputFile + Integer.toString(totalFiles) + ".ser";
+            String outfilepath = OutputFile + Integer.toString(totalFiles) + ".ser";
             
             // Give this to thread runner
             parser.execute(new WikiParser(infilepath, outfilepath, logger));
@@ -83,6 +83,8 @@ public class WikiExtractParser {
     }
     
     public static void main(String [] args){
+        WikiDirectory = "text";
+        OutputFile = args[0];
         WikiExtractParser wikiparser = new WikiExtractParser();
         wikiparser.logger.info("Starting to Parse Wiki Texts");
         wikiparser.extractWiki();
