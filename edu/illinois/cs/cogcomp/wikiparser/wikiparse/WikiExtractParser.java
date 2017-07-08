@@ -83,8 +83,8 @@ public class WikiExtractParser {
     }
     
     public static void main(String [] args){
-        WikiDirectory = "text";
-        OutputFile = args[0];
+        WikiDirectory = args[0];
+        OutputFile = args[1];
         WikiExtractParser wikiparser = new WikiExtractParser();
         wikiparser.logger.info("Starting to Parse Wiki Texts");
         wikiparser.extractWiki();
