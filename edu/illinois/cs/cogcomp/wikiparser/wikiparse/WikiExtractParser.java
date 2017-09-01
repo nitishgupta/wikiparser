@@ -20,9 +20,9 @@ import java.util.logging.SimpleFormatter;
  */
 public class WikiExtractParser {
     private Logger logger = Logger.getLogger("WikiExtractParser");
-    public String logfile = System.getProperty("user.dir") + "/ExtractedWiki.log";
-    public static String WikiDirectory;
-    public static String OutputFile;
+    public String logfile = System.getProperty("user.dir") + "/logs/ExtractedWiki.log";
+    public static String wikiDirectory;
+    public static String outputFile;
     private FileHandler fh;
     private ThreadPoolExecutor parser = null;
     
@@ -31,6 +31,8 @@ public class WikiExtractParser {
         System.out.println(logfile);
         try {
                 // This block configure the logger with handler and formatter
+                File dir = new File("logs");
+                dir.mkdir();
                 fh = new FileHandler(logfile);
                 logger.addHandler(fh);
                 SimpleFormatter formatter = new SimpleFormatter();
@@ -62,7 +64,7 @@ public class WikiExtractParser {
     
     public void extractWiki(){
         // Dir path to parsed Wikipedia. This dir contains multiple nested dirs with multiple files.
-        File inDir = new File(WikiDirectory);
+        File inDir = new File(wikiDirectory);
         // This dir will replicate the dir/file structure in 'inDir'.
 	Iterator<File> i = org.apache.commons.io.FileUtils.iterateFiles(inDir, null, true);
         
@@ -73,7 +75,7 @@ public class WikiExtractParser {
             totalFiles ++;
             File file = i.next();
             String infilepath = file.toString();
-            String outfilepath = OutputFile + Integer.toString(totalFiles) + ".ser";
+            String outfilepath = outputFile + "/tmp" + Integer.toString(totalFiles) + ".ser";
             
             // Give this to thread runner
             parser.execute(new WikiParser(infilepath, outfilepath, logger));
@@ -83,8 +85,8 @@ public class WikiExtractParser {
     }
     
     public static void main(String [] args){
-        WikiDirectory = args[0];
-        OutputFile = args[1];
+        wikiDirectory = args[0];
+        outputFile = args[1];
         WikiExtractParser wikiparser = new WikiExtractParser();
         wikiparser.logger.info("Starting to Parse Wiki Texts");
         wikiparser.extractWiki();
