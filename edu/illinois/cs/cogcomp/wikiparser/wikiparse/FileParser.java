@@ -132,18 +132,19 @@ public class FileParser implements Runnable {
     }
     
     public static DataFields getFields(String doc){
+        /*
+            Helper function to get required date from
+            a single document and creates a temporary
+            DataFields object to store those data
+        */
         String [] lines = doc.trim().split("\n");
         assert (lines[0].startsWith("<doc id=")); // Line 1 should be <doc ... >
                 
         // Gets Wikititle
         String title = lines[0].split("title=\"")[1];
-        String wikiTitle = title.substring(0,title.length()-3); // Removes extra characters
-        if (wikiTitle.startsWith("List of") || wikiTitle.startsWith("Lists of")) return null;
-        try {
-            wikiTitle = decodeURL(wikiTitle);
-        } catch (Exception e) {
-            logger.severe("URL Parsing failed : " + wikiTitle);
-        }         
+        String wikiTitle = title.substring(0,title.length()-2); // Removes extra characters
+        wikiTitle = wikiTitle.replaceAll(" ", "_");
+        if (wikiTitle.startsWith("List of") || wikiTitle.startsWith("Lists of")) return null;       
             
         // Gets curID
         String firstLine = lines[0].split("curid=")[1];
@@ -153,38 +154,59 @@ public class FileParser implements Runnable {
                 
         // Gets page title
         String pageTitle = lines[1];
+        pageTitle = pageTitle.replaceAll(" ", "_");
             
         // Gets text
         String text = getText(lines);
         return new DataFields(wikiTitle, pageTitle, curId, text);
     }
     
-    public static List<WikiPage> breakDocs(String filename){
+    public static WikiPage parseDoc(String doc){
+        /*
+            Helper function to create a WikiPage 
+            object from a single document
+        */
+        if (!doc.trim().isEmpty()){
+            DataFields dataObj = getFields(doc);
+            if(dataObj == null) return null;
+                
+            // Gets Text and internal hyperlinks
+            Pair<StringBuilder, Map<Pair<Integer, Integer>, String>> cleanText2Offset = cleanDocText(dataObj.getText());
+            String doctext = cleanText2Offset.getFirst().toString();
+                 
+            Map<Pair<Integer, Integer>, String> hyperlinks = cleanText2Offset.getSecond();
+            WikiPage wp = new WikiPage();
+            wp.setWikiPageFields(dataObj.getWikiTitle(), dataObj.getPageTitle(), dataObj.getId(), doctext, hyperlinks);
+            return wp;
+        }
+        else return null;
+    }
+    
+    public static String[] breakDocs(String filename){
         /**
          * Takes the name of the file to parse as input
-         * Returns: a list of WikiPage objects with the required data fields
+         * Returns: an array of documents as strings
          */
         String text = null;
         text = FileUtils.readFileToString(filename);
         if(text == null) return null;
         
         String [] docs = text.split("</doc>");
+        return docs;
+    }
+    
+    public static List<WikiPage> parseFile(String filename){
+        /*
+            This breaks an entire file into multiple docs and parses
+            them to get the required data.  It returns a list of wikipage
+            objects from the file
+        */
         List<WikiPage> data = new ArrayList();
+        String [] docs = breakDocs(filename);
         for(int i = 0; i < docs.length; i++){
             String doc = docs[i];
-            if (!doc.trim().isEmpty()){
-                DataFields dataObj = getFields(doc);
-                if(dataObj == null) continue;
-                
-                // Gets Text and internal hyperlinks
-                Pair<StringBuilder, Map<Pair<Integer, Integer>, String>> cleanText2Offset = cleanDocText(dataObj.getText());
-                String doctext = cleanText2Offset.getFirst().toString();
-                    
-                Map<Pair<Integer, Integer>, String> hyperlinks = cleanText2Offset.getSecond();
-                WikiPage wp = new WikiPage();
-                wp.setWikiPageFields(dataObj.getWikiTitle(), dataObj.getPageTitle(), dataObj.getId(), doctext, hyperlinks);
-                data.add(wp);
-            }
+            WikiPage wp = parseDoc(doc);            
+            if(wp != null) data.add(wp);
         }
         
         return data;
@@ -192,7 +214,7 @@ public class FileParser implements Runnable {
     
     public void run(){
         try{
-            List<WikiPage> res = breakDocs(this.infile);
+            List<WikiPage> res = parseFile(this.infile);
             Serialize.serialize(res, this.outfile);
         }catch(Exception e){
             logger.severe("Wiki Parsing failed : \nInFile : " + infile + "\nOutfile : " + outfile);
