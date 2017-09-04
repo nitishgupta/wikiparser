@@ -1,4 +1,4 @@
-package edu.illinois.cs.cogcomp.wikiparser.wikiparse;
+package edu.illinois.cs.cogcomp.wikiparser.ds;
 
 import java.util.*;
 import edu.illinois.cs.cogcomp.wikiparser.utils.Pair;
@@ -9,7 +9,7 @@ import edu.illinois.cs.cogcomp.wikiparser.utils.Pair;
  * 
  * Data Structure to hold all of the required data fields of a wiki page
  */
-public class WikiPage {
+public class WikiPage implements java.io.Serializable {
     private String wikiTitle;  // This is the title in the hyperlink with underscores and decoded url
     private String pageTitle;  // Title of the page visible in the Wikipedia webpage.  This includes spaces.
     private Integer curId;  // Integer ID that is unique to every wikipedia page
@@ -69,6 +69,14 @@ public class WikiPage {
     }
     
     public void setLinks(Map<Pair<Integer, Integer>, String> hyperlinks){
+        this.hyperlinks = hyperlinks;
+    }
+    
+    public void setWikiPageFields(String wikiTitle, String pageTitle, int curId, String text, Map<Pair<Integer, Integer>, String> hyperlinks){
+        this.wikiTitle = wikiTitle;
+        this.pageTitle = pageTitle;
+        this.curId = curId;
+        this.text = text;
         this.hyperlinks = hyperlinks;
     }
 }
