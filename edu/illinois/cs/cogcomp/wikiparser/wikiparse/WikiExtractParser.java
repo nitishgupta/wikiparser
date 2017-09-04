@@ -78,7 +78,7 @@ public class WikiExtractParser {
             String outfilepath = outputFile + "/tmp" + Integer.toString(totalFiles) + ".ser";
             
             // Give this to thread runner
-            parser.execute(new WikiParser(infilepath, outfilepath, logger));
+            parser.execute(new FileParser(infilepath, outfilepath, logger));
         }
         
         System.out.println("[#] Total Files: " + totalFiles);
