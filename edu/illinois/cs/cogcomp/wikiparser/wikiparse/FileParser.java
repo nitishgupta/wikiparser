@@ -1,7 +1,6 @@
 package edu.illinois.cs.cogcomp.wikiparser.wikiparse;
 
 import edu.illinois.cs.cogcomp.wikiparser.ds.WikiPage;
-import edu.illinois.cs.cogcomp.wikiparser.ds.DataFields;
 import java.io.*;
 import java.util.*;
 import java.util.logging.Logger;
@@ -21,6 +20,48 @@ import edu.illinois.cs.cogcomp.wikiparser.utils.Pair;
  */
 public class FileParser implements Runnable {
     
+    /*
+        This class is used to temporarily store data from the the parsing of 
+        a single document.  The text variable will then be additionally 
+        processed further to get the document text and hyperlinks.
+    */
+    public class DataFields {
+        private String wikiTitle;  // This is the title in the hyperlink with underscores and decoded url
+        private String pageTitle;  // Title of the page visible in the Wikipedia webpage.  This includes spaces.
+        private Integer curId;  // Integer ID that is unique to every wikipedia page
+        private String text; // This contains the text and hyperlinks of a document
+
+        public DataFields(){
+            this.wikiTitle = null;
+            this.pageTitle = null;
+            this.text = null;
+            this.curId = null;
+        }
+
+        public DataFields(String wikiTitle, String pageTitle, Integer curId, String text){
+            this.wikiTitle = wikiTitle;
+            this.pageTitle = pageTitle;
+            this.curId = curId;
+            this.text = text;
+        }
+
+        public String getWikiTitle(){
+            return this.wikiTitle;
+        }
+
+        public String getPageTitle(){
+            return this.pageTitle;
+        }
+
+        public int getId(){
+            return this.curId;
+        }
+
+        public String getText(){
+            return this.text;
+        }
+    }
+    
     private static Logger logger;
     public String infile;
     public String outfile;
@@ -29,28 +70,6 @@ public class FileParser implements Runnable {
         this.logger = logger;
         this.infile = infile;
         this.outfile = outfile;
-    }
-    
-    private static String fileToString (String filename) throws IOException{
-        /**
-         * Converts an text file of wikipedia pages into a single string
-         */
-        BufferedReader reader = new BufferedReader(new FileReader (filename));
-        String line = null;
-        StringBuilder stringBuilder = new StringBuilder();
-        String ls = System.getProperty("line.separator");
-
-        try {
-            while((line = reader.readLine()) != null) {
-                stringBuilder.append(line);
-                stringBuilder.append(ls);
-            }
-
-            return stringBuilder.toString();
-        } 
-        finally {
-            reader.close();
-        }
     }
     
     private static String decodeURL(String url) throws UnsupportedEncodingException {
@@ -79,7 +98,7 @@ public class FileParser implements Runnable {
        return urlSurface;
     }
     
-    private static String getText(String [] lines){
+    private String getDocText(String [] lines){
         /**
          * Helper function to convert all of the lines
          * in a single article to a single string
@@ -88,15 +107,15 @@ public class FileParser implements Runnable {
         for(int i = 2; i < lines.length; i++){ // First line is url and second is title - Skip them
             if (!lines[i].trim().isEmpty()) {
                 doc.append(lines[i]);
-            } 
-            doc.append("\n");
+                doc.append("\n");
+            }
         }
         
         String docText = doc.toString().trim();
         return docText;
     }
     
-    private static Pair<StringBuilder, Map<Pair<Integer, Integer>, String>> cleanDocText(String markedupText) {
+    private Pair<StringBuilder, Map<Pair<Integer, Integer>, String>> cleanDocText(String markedupText) {
         /**
         * Takes text marked with <a href="url">surface</a> and returns
         * Returns:
@@ -131,9 +150,9 @@ public class FileParser implements Runnable {
         return new Pair<StringBuilder,Map<Pair<Integer, Integer>, String>>(cleanText, offsets2Title);
     }
     
-    public static DataFields getFields(String doc){
+    public DataFields getFields(String doc){
         /*
-            Helper function to get required date from
+            Helper function to get required data from
             a single document and creates a temporary
             DataFields object to store those data
         */
@@ -157,18 +176,18 @@ public class FileParser implements Runnable {
         pageTitle = pageTitle.replaceAll(" ", "_");
             
         // Gets text
-        String text = getText(lines);
+        String text = getDocText(lines);
         return new DataFields(wikiTitle, pageTitle, curId, text);
     }
     
-    public static WikiPage parseDoc(String doc){
+    public WikiPage parseDoc(String doc){
         /*
             Helper function to create a WikiPage 
             object from a single document
         */
         if (!doc.trim().isEmpty()){
             DataFields dataObj = getFields(doc);
-            if(dataObj == null) return null;
+            if(dataObj == null) return null;  // Returns null if the wikipage is to be excluded.  This includes List pages.
                 
             // Gets Text and internal hyperlinks
             Pair<StringBuilder, Map<Pair<Integer, Integer>, String>> cleanText2Offset = cleanDocText(dataObj.getText());
@@ -182,7 +201,7 @@ public class FileParser implements Runnable {
         else return null;
     }
     
-    public static String[] breakDocs(String filename){
+    public String[] breakDocs(String filename){
         /**
          * Takes the name of the file to parse as input
          * Returns: an array of documents as strings
@@ -195,7 +214,7 @@ public class FileParser implements Runnable {
         return docs;
     }
     
-    public static List<WikiPage> parseFile(String filename){
+    public List<WikiPage> parseFile(String filename){
         /*
             This breaks an entire file into multiple docs and parses
             them to get the required data.  It returns a list of wikipage
@@ -205,8 +224,8 @@ public class FileParser implements Runnable {
         String [] docs = breakDocs(filename);
         for(int i = 0; i < docs.length; i++){
             String doc = docs[i];
-            WikiPage wp = parseDoc(doc);            
-            if(wp != null) data.add(wp);
+            WikiPage wp = parseDoc(doc);  
+            if(wp != null) data.add(wp);  // This can be null when the datafield object created from a single document is null
         }
         
         return data;
