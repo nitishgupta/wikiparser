@@ -11,9 +11,6 @@ import java.util.logging.Logger;
 import java.util.logging.SimpleFormatter;
 
 /**
- *
- * @author Reuben-PC
- * 
  * This class receives as input the output of the python parser which is a folder of folder 
  * of wiki text files.  It reads each text file in the directory and parses them into
  * serialized lists of WikiPage objects
@@ -40,15 +37,15 @@ public class WikiExtractParser {
                 logger.setUseParentHandlers(false);
                 // the following statement is used to log any messages
                 logger.info("Static Function");
-        } catch (SecurityException e) {
-                e.printStackTrace();
-        } catch (IOException e) {
+        } catch (Exception e) {
                 e.printStackTrace();
         }
     }
     
-    // Manages a fixed number of WikiParser threads
     public static ThreadPoolExecutor getBoundedThreadPool() {
+        /*
+            Manages a fixed number of WikiParser threads
+        */
         int coreCount = Runtime.getRuntime().availableProcessors();
         coreCount = Math.max(coreCount, 10);
         ThreadPoolExecutor executor = new ThreadPoolExecutor(
