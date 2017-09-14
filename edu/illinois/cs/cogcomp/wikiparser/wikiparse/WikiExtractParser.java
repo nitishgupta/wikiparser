@@ -19,7 +19,7 @@ public class WikiExtractParser {
     private Logger logger = Logger.getLogger("WikiExtractParser");
     public String logfile = System.getProperty("user.dir") + "/logs/ExtractedWiki.log";
     public static String wikiDirectory;
-    public static String outputFile;
+    public static String outputDir;
     private FileHandler fh;
     private ThreadPoolExecutor parser = null;
     
@@ -72,7 +72,7 @@ public class WikiExtractParser {
             totalFiles ++;
             File file = i.next();
             String infilepath = file.toString();
-            String outfilepath = outputFile + "/tmp" + Integer.toString(totalFiles) + ".ser";
+            String outfilepath = outputDir + "/tmp" + Integer.toString(totalFiles) + ".ser";
             
             // Give this to thread runner
             parser.execute(new FileParser(infilepath, outfilepath, logger));
@@ -83,7 +83,7 @@ public class WikiExtractParser {
     
     public static void main(String [] args){
         wikiDirectory = args[0];
-        outputFile = args[1];
+        outputDir = args[1];
         WikiExtractParser wikiparser = new WikiExtractParser();
         wikiparser.logger.info("Starting to Parse Wiki Texts");
         wikiparser.extractWiki();
