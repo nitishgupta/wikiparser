@@ -73,17 +73,19 @@ public class FileParser implements Runnable {
     }
     
     private static String decodeURL(String url) throws UnsupportedEncodingException {
-            return java.net.URLDecoder.decode(url, "UTF-8");
+        url = java.net.URLEncoder.encode(url , "UTF-8"); // This is done in order to get rid of improper encoding after being parsed by wikiextractor.py
+        return java.net.URLDecoder.decode(url, "UTF-8");
     }
     
-    private static String[] _cleanHyperLink(String string) {
+    private String[] _cleanHyperLink(String string) {
         /**
         * Input : <a href="Grand%20Slam%20%28tennis%29">Grand Slam</a>
         * Output : String[] = [decode("Grand%20Slam%20%28tennis%29"), "Grand Slam"]
         *
         * If Url cannot be parsed, then output String[0] = null
         */
-
+       if(string == null || string.isEmpty()) return null;
+       else if(!string.substring(0,7).contains("<a href")) return null;
        int len = string.length();
        String urlCharCharSurface = string.substring(9, len - 4);  // Returns : url">surface
        String[] urlSurface = urlCharCharSurface.split("\">");
@@ -92,6 +94,9 @@ public class FileParser implements Runnable {
        try {
                decodedUrl = decodeURL(urlSurface[0]);
        } catch (Exception e) {
+               logger.severe("File : " + infile);
+               logger.severe("Input : " + urlCharCharSurface);
+               logger.severe("Exception: " + e.toString());
                logger.severe("URL Parsing failed : " + urlSurface[0]);
        }
        urlSurface[0] = decodedUrl;
@@ -103,6 +108,7 @@ public class FileParser implements Runnable {
          * Helper function to convert all of the lines
          * in a single article to a single string
          */
+        if(lines.length < 3) return null;
         StringBuilder doc = new StringBuilder();
         for(int i = 2; i < lines.length; i++){ // First line is url and second is title - Skip them
             if (!lines[i].trim().isEmpty()) {
@@ -126,9 +132,13 @@ public class FileParser implements Runnable {
         *                 The text field is stored as in the same format as the parsed text where
         *                 the paragraphs are kept as they are and are separated by an empty line.  
         */
+        //if(markedupText == null) return null;
         StringBuilder cleanText = new StringBuilder();
 	Map<Pair<Integer, Integer>, String> offsets2Title = new HashMap();
         Pattern linkPattern = Pattern.compile("(<a[^>]+>.+?</a>)",  Pattern.CASE_INSENSITIVE|Pattern.DOTALL);
+        if(markedupText == null){  // if text is null, do not attempt to find patterns.  It will lead to a null pointer exception
+            return new Pair<StringBuilder,Map<Pair<Integer, Integer>, String>>(cleanText, offsets2Title);
+        }
 	Matcher matcher = linkPattern.matcher(markedupText);
         int len = markedupText.length();
         int oldStart = 0;
@@ -137,7 +147,7 @@ public class FileParser implements Runnable {
             start = matcher.start();
             cleanText.append(markedupText.substring(oldStart, start));
             String[] urlSurface = _cleanHyperLink(matcher.group());
-
+            if(urlSurface == null || urlSurface.length == 0) continue;
             if (urlSurface[0] != null) {
                 offsets2Title.put(new Pair<Integer, Integer>(cleanText.length(), cleanText.length()+urlSurface[1].length()),
                                   urlSurface[0]);
@@ -157,6 +167,7 @@ public class FileParser implements Runnable {
             DataFields object to store those data
         */
         String [] lines = doc.trim().split("\n");
+        if(lines.length == 0) return null;
         assert (lines[0].startsWith("<doc id=")); // Line 1 should be <doc ... >
                 
         // Gets Wikititle
@@ -222,6 +233,7 @@ public class FileParser implements Runnable {
         */
         List<WikiPage> data = new ArrayList();
         String [] docs = breakDocs(filename);
+        if(docs == null) return data;
         for(int i = 0; i < docs.length; i++){
             String doc = docs[i];
             WikiPage wp = parseDoc(doc);  
@@ -236,7 +248,8 @@ public class FileParser implements Runnable {
             List<WikiPage> res = parseFile(this.infile);
             Serialize.serialize(res, this.outfile);
         }catch(Exception e){
-            logger.severe("Wiki Parsing failed : \nInFile : " + infile + "\nOutfile : " + outfile);
+            logger.severe("Wiki Parsing failed : \nInFile : " + infile + " \nOutfile : " + outfile);
+            logger.severe("Exception: " + e.toString());
         }
     }   
     
