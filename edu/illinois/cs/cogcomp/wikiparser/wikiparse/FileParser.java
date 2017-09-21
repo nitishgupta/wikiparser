@@ -84,7 +84,7 @@ public class FileParser implements Runnable {
         *
         * If Url cannot be parsed, then output String[0] = null
         */
-       if(string == null || string.isEmpty()) return null;
+       if(string == null || string.isEmpty() || string.length() < 7) return null;
        else if(!string.substring(0,7).contains("<a href")) return null;
        int len = string.length();
        String urlCharCharSurface = string.substring(9, len - 4);  // Returns : url">surface
@@ -132,7 +132,6 @@ public class FileParser implements Runnable {
         *                 The text field is stored as in the same format as the parsed text where
         *                 the paragraphs are kept as they are and are separated by an empty line.  
         */
-        //if(markedupText == null) return null;
         StringBuilder cleanText = new StringBuilder();
 	Map<Pair<Integer, Integer>, String> offsets2Title = new HashMap();
         Pattern linkPattern = Pattern.compile("(<a[^>]+>.+?</a>)",  Pattern.CASE_INSENSITIVE|Pattern.DOTALL);
@@ -147,7 +146,7 @@ public class FileParser implements Runnable {
             start = matcher.start();
             cleanText.append(markedupText.substring(oldStart, start));
             String[] urlSurface = _cleanHyperLink(matcher.group());
-            if(urlSurface == null || urlSurface.length == 0) continue;
+            if(urlSurface == null || urlSurface.length < 2) continue;
             if (urlSurface[0] != null) {
                 offsets2Title.put(new Pair<Integer, Integer>(cleanText.length(), cleanText.length()+urlSurface[1].length()),
                                   urlSurface[0]);
