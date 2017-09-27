@@ -20,7 +20,6 @@ public class DataMachine {
 		spf.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, false);
 		// Path where wiki dump is stored.
 		String[] arg = {"english", "Contents", "Disambiguation_pages", jwplInputDir};
-                System.out.println("Running data machine");
 		JWPLDataMachine.main(arg);
 	}
 }
