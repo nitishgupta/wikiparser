@@ -1,2 +1,0 @@
-"Date/Time","Total Memory","Free Memory","Message"
-"2017.09.26 20:19:59","163053568","123191792","Not all necessary source files could be found in C:\\Users\\Reuben-PC\\Desktop\\wikiparserfiles"
