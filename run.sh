@@ -13,7 +13,3 @@ fi
 
 mvn clean compile
 mvn exec:java -Dexec.mainClass="edu.illinois.cs.cogcomp.wikiparser.wikiparse.Runner" -Dexec.args="$1 $4 $5"
-
-# sh run.sh C:\\Users\\Reuben-PC\\Desktop\\wikiparserfiles 2 C:\\Users\\Reuben-PC\\Desktop\\dewiki-20170220-stub-articles1.xml.gz C:\\Users\\Reuben-PC\\Desktop\\text C:\\tmp false
-# ./run.sh C:\\Users\\Reuben-PC\\Desktop\\text C:\\tmp
-# sh run.sh 2 C:\\Users\\Reuben-PC\\Desktop\\enwiki-20170520-pages-articles.xml.bz2 C:\\Users\\Reuben-PC\\Desktop\\test C:\\tmp
