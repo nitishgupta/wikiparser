@@ -26,7 +26,6 @@ public class Runner {
         if(!f.exists() && !f.isDirectory()){  // Runs DataMachine if output folder does not exist
            try{
                DataMachine.runDM(jwplInputDir);
-               System.out.println("Done running DM");
            } catch(Exception e){
                wikiparser.logger.severe(e.toString());
            }
