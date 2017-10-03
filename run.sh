@@ -1,4 +1,4 @@
-# This shell script takes 4 arguments.
+# This shell script takes 6 arguments.
 # First argument: File path to directory containing source files required for JWPL.
 # Second argument: Number of processors to be used
 # Third argument: File path of the wiki dump to be parsed
