@@ -50,7 +50,7 @@
                     </configuration>
                 </execution>
             </executions>
-        </plugin>
+          </plugin>
           <plugin>
             <!-- Build an executable JAR -->
             <groupId>org.apache.maven.plugins</groupId>
