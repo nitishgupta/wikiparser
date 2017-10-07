@@ -25,7 +25,6 @@ public class WikiExtractParser {
     
     public WikiExtractParser() {
         parser = getBoundedThreadPool();
-        System.out.println(logfile);
         try {
                 // This block configure the logger with handler and formatter
                 File dir = new File("logs");
