@@ -15,22 +15,9 @@ import edu.illinois.cs.cogcomp.wikiparser.jwpl.DataMachine;
  */
 public class Runner {
     public static void main(String [] args){
-        String jwplInputDir = args[0];
         WikiExtractParser wikiparser = new WikiExtractParser();
-        wikiparser.wikiDirectory = args[1];
-        wikiparser.outputDir = args[2];
-        
-        String jwplOutput = jwplInputDir + "\\\\output";  // Gets the path of the JWPL output folder
-        File f = new File(jwplOutput);
-        
-        if(!f.exists() && !f.isDirectory()){  // Runs DataMachine if output folder does not exist
-           try{
-               DataMachine.runDM(jwplInputDir);
-           } catch(Exception e){
-               wikiparser.logger.severe(e.toString());
-           }
-        }
-        
+        wikiparser.wikiDirectory = args[0];
+        wikiparser.outputDir = args[1];
         wikiparser.logger.info("Starting to Parse Wiki Texts");
         wikiparser.extractWiki();
     }
