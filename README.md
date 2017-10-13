@@ -13,15 +13,21 @@ This will generate 11 files in a folder called output.  Next, the wikiparser wil
 
 USAGE
 
-A shell script is provided to run the wikiparser too.  The shellscript takes the following 6 arguments in order:
+3 shell scripts are provided to run the various parts of this tool.  The first script "runwikiextractor.sh" runs the wikiextractor tool.  The second script "runjwpl" runs the JWPL datamachine code.  Finally, the last script "runwikiparser" runs the java wikiparser code.
+The runwikiextractor script takes 3 arguments as follows:
+
+1) Number of processors to be used
+2) File path of the wiki dump to be parsed
+3) File path of your desired location for your output for the wikiextractor.py
+
+The runjwpl script takes 1 argument as follows:
 
 1) File path to directory containing source files required for JWPL
-2) Number of processors to be used
-3) File path of the wiki dump to be parsed
-4) File path of your desired location for your output for the wikiextractor.py
-5) File path of desired output for the java wiki parser
-6) Boolean flag (0 or 1) to indicate if wikiextractor.py should be run.
 
+The runwikiparser script takes 2 arguments as follows:
+
+1) File path to directory containing extracted wiki pages to be parsed
+2) File path of desired output for the java wiki parser
 
 
 
