@@ -49,7 +49,7 @@ public class PageMapLineParser {
         }
         int count = 0;
         // Writes list of all Cur Ids
-        File file = new File(dataFolder + "\\" + "list_of_all_curids.txt");
+        File file = new File(dataFolder + "\\" + "pageIds.txt");
         try{
             FileWriter fw = new FileWriter(file.getAbsoluteFile());
             BufferedWriter bw = new BufferedWriter(fw);
@@ -67,7 +67,7 @@ public class PageMapLineParser {
         
         // Writes list of resolved Cur Ids
         count = 0;
-        file = new File(dataFolder + "\\" + "list_of_resolved_curids.txt");
+        file = new File(dataFolder + "\\" + "resolvedPageIds.txt");
         try{
             FileWriter fw = new FileWriter(file.getAbsoluteFile());
             BufferedWriter bw = new BufferedWriter(fw);
@@ -85,7 +85,7 @@ public class PageMapLineParser {
         
         // Writes map from Cur Ids (first column) to page titles (second column)
         count = 0;
-        file = new File(dataFolder + "\\" + "map_curids_to_titles.txt");
+        file = new File(dataFolder + "\\" + "curIds2Titles.txt");
         try{
             FileWriter fw = new FileWriter(file.getAbsoluteFile());
             BufferedWriter bw = new BufferedWriter(fw);
@@ -103,7 +103,7 @@ public class PageMapLineParser {
         
         // Writes map from page titles (first column) to resolved page titles (second column)
         count = 0;
-        file = new File(dataFolder + "\\" + "map_unresolved_titles_to_resolved_titles.txt");
+        file = new File(dataFolder + "\\" + "unresTitles2resTitles.txt");
         try{
             FileWriter fw = new FileWriter(file.getAbsoluteFile());
             BufferedWriter bw = new BufferedWriter(fw);
@@ -121,7 +121,7 @@ public class PageMapLineParser {
         
         // Writes list of Cur Ids which belong to list pages
         count = 0;
-        file = new File(dataFolder + "\\" + "list_of_resolved_list_curids.txt");
+        file = new File(dataFolder + "\\" + "resListPages.txt");
         try{
             FileWriter fw = new FileWriter(file.getAbsoluteFile());
             BufferedWriter bw = new BufferedWriter(fw);
