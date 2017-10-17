@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package edu.illinois.cs.cogcomp.wikiparser.jwpl;
 
 import java.io.BufferedReader;
@@ -20,10 +15,10 @@ import java.util.*;
  */
 public class PageMapLineParser {
     private static List<Integer> curIds = new ArrayList(); // Stores all CurIds, both resolved and unresolved
-    private static Set<Integer> resolvedCurIds = new HashSet<Integer>();  // Stores resolved Cur Ids
+    public static Set<Integer> resolvedCurIds = new HashSet<Integer>();  // Stores resolved Cur Ids
     private static Set<Integer> listPages = new HashSet<Integer>();  // Stores Cur Ids which are list pages
-    private static Map<Integer, Integer> uidToRid = new HashMap(); // Maps unresolved Cur Ids to resolved Cur Ids
-    private static Map<Integer, String> curidsToTitles = new HashMap();  // Map from all Cur Ids to page titles 
+    public static Map<Integer, Integer> uidToRid = new HashMap(); // Maps unresolved Cur Ids to resolved Cur Ids
+    public static Map<Integer, String> curidsToTitles = new HashMap();  // Map from all Cur Ids to page titles 
     private static Map<String, String> uptToRpt = new HashMap(); // Maps unresolved page titles to resolved page titles
     
     private void mapUnresolvedToResolved(){
