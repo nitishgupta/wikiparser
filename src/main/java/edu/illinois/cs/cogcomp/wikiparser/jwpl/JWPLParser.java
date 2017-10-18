@@ -12,11 +12,11 @@ public class JWPLParser {
         System.out.println("Starts parsing PageMapLine.txt");
         PageMapLineParser parser1 = new PageMapLineParser();
         parser1.parsePageMap(JWPLConstants.pageMapFile);
-        
+
         System.out.println("Starts parsing Category.txt");
         CategoryParser parser2 = new CategoryParser();
         parser2.parseCategory(JWPLConstants.categoryFile);
-        
+
         System.out.println("Starting to parse Page_Categories.txt");
         CategoryPagesParser parser3 = new CategoryPagesParser();
         parser3.parseCategoryPages(JWPLConstants.categoryPageFile);

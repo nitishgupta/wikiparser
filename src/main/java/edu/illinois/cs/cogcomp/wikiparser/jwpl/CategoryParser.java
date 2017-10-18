@@ -17,18 +17,18 @@ public class CategoryParser {
     public static Map<Integer, String> idToDisambCat = new HashMap(); // Maps category id to disambiguation categories
     public static Map<Integer, String> idToCat = new HashMap();  // Maps category id to category titles
     private static Map<String, Integer> catToId = new HashMap();  // Maps category titles to category id
-    
+
     private void writeToFiles(){
         String projectFolder = System.getProperty("user.dir");
-        String dataFolder = projectFolder + "\\category_output";
+        String dataFolder = projectFolder + "/category_output";
         File directory = new File(dataFolder);
         if(! directory.exists()){
             directory.mkdir();
         }
         int count = 0;
-        
+
         // Writes map from category id (first column) to category title (second column)
-        File file = new File(dataFolder + "\\" + "id2Title.txt");
+        File file = new File(dataFolder + "/" + "id2Title.txt");
         try{
             FileWriter fw = new FileWriter(file.getAbsoluteFile());
             BufferedWriter bw = new BufferedWriter(fw);
@@ -43,10 +43,10 @@ public class CategoryParser {
             e.printStackTrace();
             System.exit(-1);
         }
-        
+
         // Write map from category title (first column) to category id (second column)
         count = 0;
-        file = new File(dataFolder + "\\" + "title2Id.txt"); 
+        file = new File(dataFolder + "/" + "title2Id.txt");
         try{
             FileWriter fw = new FileWriter(file.getAbsoluteFile());
             BufferedWriter bw = new BufferedWriter(fw);
@@ -62,7 +62,7 @@ public class CategoryParser {
             System.exit(-1);
         }
     }
-    
+
     public void parseCategory(String CategoryFile){
         try {
             File file = new File(CategoryFile);

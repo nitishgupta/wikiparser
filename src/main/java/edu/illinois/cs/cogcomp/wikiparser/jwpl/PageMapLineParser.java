@@ -10,41 +10,41 @@ import java.util.*;
 
 /**
  *  This class receives the PageMapLine.txt file as input.  It will
- *  parse the file and create data structures from it.  The results 
+ *  parse the file and create data structures from it.  The results
  *  will be written to files stored in a folder called page_map_line_output.
  */
 public class PageMapLineParser {
-    private static List<Integer> curIds = new ArrayList(); // Stores all CurIds, both resolved and unresolved
+    private static Set<Integer> curIds = new HashSet(); // Stores all CurIds, both resolved and unresolved
     public static Set<Integer> resolvedCurIds = new HashSet<Integer>();  // Stores resolved Cur Ids
     private static Set<Integer> listPages = new HashSet<Integer>();  // Stores Cur Ids which are list pages
     public static Map<Integer, Integer> uidToRid = new HashMap(); // Maps unresolved Cur Ids to resolved Cur Ids
-    public static Map<Integer, String> curidsToTitles = new HashMap();  // Map from all Cur Ids to page titles 
+    public static Map<Integer, String> curidsToTitles = new HashMap();  // Map from all Cur Ids to page titles
     private static Map<String, String> uptToRpt = new HashMap(); // Maps unresolved page titles to resolved page titles
-    
+
     private void mapUnresolvedToResolved(){
         for(Integer id : curIds){
             String unresolvedPageTitle = null;
             String resolvedPageTitle = null;
             Integer resolvedId = null;
             if(uidToRid.containsKey(id)) resolvedId = uidToRid.get(id);
-            if(curidsToTitles.containsKey(id)) unresolvedPageTitle = curidsToTitles.get(id); 
+            if(curidsToTitles.containsKey(id)) unresolvedPageTitle = curidsToTitles.get(id);
             if(resolvedId != null && curidsToTitles.containsKey(resolvedId)) resolvedPageTitle = curidsToTitles.get(resolvedId);
             if(unresolvedPageTitle != null && resolvedPageTitle != null){
                 uptToRpt.put(unresolvedPageTitle, resolvedPageTitle);
             }
         }
     }
-    
+
     private void writeToFiles(){
         String projectFolder = System.getProperty("user.dir");
-        String dataFolder = projectFolder + "\\page_map_line_output";
+        String dataFolder = projectFolder + "/page_map_line_output";
         File directory = new File(dataFolder);
         if(! directory.exists()){
             directory.mkdir();
         }
         int count = 0;
         // Writes list of all Cur Ids
-        File file = new File(dataFolder + "\\" + "pageIds.txt");
+        File file = new File(dataFolder + "/" + "pageIds.txt");
         try{
             FileWriter fw = new FileWriter(file.getAbsoluteFile());
             BufferedWriter bw = new BufferedWriter(fw);
@@ -59,10 +59,10 @@ public class PageMapLineParser {
             e.printStackTrace();
             System.exit(-1);
         }
-        
+
         // Writes list of resolved Cur Ids
         count = 0;
-        file = new File(dataFolder + "\\" + "resolvedPageIds.txt");
+        file = new File(dataFolder + "/" + "resolvedPageIds.txt");
         try{
             FileWriter fw = new FileWriter(file.getAbsoluteFile());
             BufferedWriter bw = new BufferedWriter(fw);
@@ -77,10 +77,10 @@ public class PageMapLineParser {
             e.printStackTrace();
             System.exit(-1);
         }
-        
+
         // Writes map from Cur Ids (first column) to page titles (second column)
         count = 0;
-        file = new File(dataFolder + "\\" + "curIds2Titles.txt");
+        file = new File(dataFolder + "/" + "curIds2Titles.txt");
         try{
             FileWriter fw = new FileWriter(file.getAbsoluteFile());
             BufferedWriter bw = new BufferedWriter(fw);
@@ -95,10 +95,10 @@ public class PageMapLineParser {
             e.printStackTrace();
             System.exit(-1);
         }
-        
+
         // Writes map from page titles (first column) to resolved page titles (second column)
         count = 0;
-        file = new File(dataFolder + "\\" + "unresTitles2resTitles.txt");
+        file = new File(dataFolder + "/" + "unresTitles2resTitles.txt");
         try{
             FileWriter fw = new FileWriter(file.getAbsoluteFile());
             BufferedWriter bw = new BufferedWriter(fw);
@@ -113,10 +113,10 @@ public class PageMapLineParser {
             e.printStackTrace();
             System.exit(-1);
         }
-        
+
         // Writes list of Cur Ids which belong to list pages
         count = 0;
-        file = new File(dataFolder + "\\" + "resListPages.txt");
+        file = new File(dataFolder + "/" + "resListPages.txt");
         try{
             FileWriter fw = new FileWriter(file.getAbsoluteFile());
             BufferedWriter bw = new BufferedWriter(fw);
@@ -132,7 +132,7 @@ public class PageMapLineParser {
             System.exit(-1);
         }
     }
-    
+
     public void parsePageMap(String pageMapFile){
         try {
             File file = new File(pageMapFile);
@@ -150,7 +150,7 @@ public class PageMapLineParser {
                 if (pageTitle.startsWith("List_of") || pageTitle.startsWith("Lists_of")){
                     if(id.equals(resolvedId)) listPages.add(resolvedId);  // Only add resolved pages
                 }
-                curIds.add(id);  // Adds unresolved Cur Ids                
+                curIds.add(id);  // Adds unresolved Cur Ids
                 resolvedCurIds.add(resolvedId); // Adds resolved Cur Ids to set
                 uidToRid.put(id, resolvedId);
                 if(!curidsToTitles.containsKey(id)){  // Maps all Cur Ids to Page Titles
