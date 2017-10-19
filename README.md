@@ -15,11 +15,31 @@ The wikiparser tool uses the Data Machine framework to obtain information such a
 
 This will generate 11 files in a folder called output.  This includes files such as PageMapLine.txt and Category.txt.
 
+3 files from the output of the JWPL DataMachine are parsed to create relevant data structures.  These files are PageMapLine.txt, Category.txt and category_pages.txt.  The data structures being created are written to text files as shown below.  In this README, resolved pages refer to Wikipedia pages that are the original articles and unresolved pages refer to articles that will be redirected to the resolved pages when you try to access them. 
+
+PageMapLine.txt:
+    1) pageIds.txt - List of all page ids
+    2) resolvedPageIds.txt - List of all resolved page ids
+    3) curIds2Titles.txt - Map from page ids (first column) to page titles (second column)
+    4) unresTitles2resTitles.txt - Map from page titles (first column) to resolved page titles (second column)
+    5) resListPages.txt - List of Cur Ids which belong to list pages
+    
+Category.txt:
+    1) id2Title.txt - Map from category id (first column) to category title (second column)
+    2) title2Id.txt - Map from category title (first column) to category id (second column)
+    
+category_pages.txt:
+    1) resId2CatTitles.txt - Map from resolved cur ids to set of category titles
+    2) resIdDisamb.txt - List of resolved cur ids of disambiguation pages
+    3) resIdNonDisamb.txt - List of resolved cur ids of non-disambiguation pages
+    4) unresTitleDisamb.txt - List of unresolved titles of disambiguation pages
+    5) unresTitleNonDisamb.txt - List of unresolved titles of non-disambiguation pages
+
 Finally, the WikiParser will parse the documents extracted by the WikiExtractor.py script in a multi-threaded way to speed up processing.  It will create a serialized WikiPage object for each wiki document.  They will be saved to a folder that you can specify.  It takes the output of the WikiExtractor, a directory of files, and produces serialized WikiPage objects in the given directory as its output.
 
 **USAGE**
 
-3 shell scripts are provided to run the various parts of this tool.  The first script "runwikiextractor.sh" runs the wikiextractor tool.  The second script "runjwpl" runs the JWPL datamachine code.  Finally, the last script "runwikiparser" runs the java wikiparser code.
+4 shell scripts are provided to run the various parts of this tool.  The first script "runwikiextractor.sh" runs the wikiextractor tool.  The second script "runjwpl" runs the JWPL datamachine code.  The third script "runwikiparser" runs the java wikiparser code.  The last script "runjwplparser" runs the code that parses the JWPL output files as mentioned above.
 The runwikiextractor script takes 3 arguments as follows:
 
 1) Number of processors to be used
@@ -43,6 +63,10 @@ The runwikiparser script takes 2 arguments as follows:
 
 Run it using:
     `sh runwikiparser.sh "Directory of WikiExtractor output" "Directory for output of WikiParser"`
+    
+The runjwplparser script does not take any arguments.
+Run it using:
+    `sh runjwplparser.sh`
 
 
 
