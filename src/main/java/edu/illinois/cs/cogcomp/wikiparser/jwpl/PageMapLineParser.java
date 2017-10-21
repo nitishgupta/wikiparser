@@ -1,12 +1,15 @@
 package edu.illinois.cs.cogcomp.wikiparser.jwpl;
 
 import java.io.BufferedReader;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.BufferedWriter;
 import java.io.IOException;
 import java.util.*;
+import edu.illinois.cs.cogcomp.wikiparser.constants.JWPLConstants;
 
 /**
  *  This class receives the PageMapLine.txt file as input.  It will
@@ -14,12 +17,17 @@ import java.util.*;
  *  will be written to files stored in a folder called page_map_line_output.
  */
 public class PageMapLineParser {
+    private String outputDir;
     private static Set<Integer> curIds = new HashSet(); // Stores all CurIds, both resolved and unresolved
     public static Set<Integer> resolvedCurIds = new HashSet<Integer>();  // Stores resolved Cur Ids
     private static Set<Integer> listPages = new HashSet<Integer>();  // Stores Cur Ids which are list pages
     public static Map<Integer, Integer> uidToRid = new HashMap(); // Maps unresolved Cur Ids to resolved Cur Ids
     public static Map<Integer, String> curidsToTitles = new HashMap();  // Map from all Cur Ids to page titles
     private static Map<String, String> uptToRpt = new HashMap(); // Maps unresolved page titles to resolved page titles
+    
+    public PageMapLineParser(String outputDir){
+        this.outputDir = outputDir;
+    }
 
     private void mapUnresolvedToResolved(){
         for(Integer id : curIds){
@@ -34,24 +42,16 @@ public class PageMapLineParser {
             }
         }
     }
-
-    private void writeToFiles(){
-        String projectFolder = System.getProperty("user.dir");
-        String dataFolder = projectFolder + "/page_map_line_output";
-        File directory = new File(dataFolder);
-        if(! directory.exists()){
-            directory.mkdir();
-        }
-        int count = 0;
-        // Writes list of all Cur Ids
-        File file = new File(dataFolder + "/" + "pageIds.txt");
+    
+    // Write list of all page ids
+    private void writePageIds(){
+        Path filePath = Paths.get(outputDir, JWPLConstants.pageIds);
+        File file = new File(filePath.toString());
         try{
             FileWriter fw = new FileWriter(file.getAbsoluteFile());
             BufferedWriter bw = new BufferedWriter(fw);
             for(Integer id : curIds){
-                count++;
-                bw.write(id.toString());
-                if(count != curIds.size()) bw.write("\n");
+                bw.write(id.toString() + "\n");
             }
             bw.close();
         }
@@ -59,17 +59,17 @@ public class PageMapLineParser {
             e.printStackTrace();
             System.exit(-1);
         }
-
-        // Writes list of resolved Cur Ids
-        count = 0;
-        file = new File(dataFolder + "/" + "resolvedPageIds.txt");
+    }
+    
+    // Writes list of resolved page ids
+    private void writeResPageIds(){
+        Path filePath = Paths.get(outputDir, JWPLConstants.resPageIds);
+        File file = new File(filePath.toString());
         try{
             FileWriter fw = new FileWriter(file.getAbsoluteFile());
             BufferedWriter bw = new BufferedWriter(fw);
             for(Integer id : resolvedCurIds){
-                count++;
-                bw.write(id.toString());
-                if(count != resolvedCurIds.size()) bw.write("\n");
+                bw.write(id.toString() + "\n");
             }
             bw.close();
         }
@@ -77,17 +77,17 @@ public class PageMapLineParser {
             e.printStackTrace();
             System.exit(-1);
         }
-
-        // Writes map from Cur Ids (first column) to page titles (second column)
-        count = 0;
-        file = new File(dataFolder + "/" + "curIds2Titles.txt");
-        try{
+    }
+    
+    // Writes map from page ids to page titles
+    private void writePageIdsToTitles(){
+        Path filePath = Paths.get(outputDir, JWPLConstants.pageIdsToTitles);
+        File file = new File(filePath.toString());
+                try{
             FileWriter fw = new FileWriter(file.getAbsoluteFile());
             BufferedWriter bw = new BufferedWriter(fw);
             for(Integer id : curidsToTitles.keySet()){
-                count++;
-                bw.write(id.toString() + "\t" + curidsToTitles.get(id));
-                if(count != curidsToTitles.keySet().size()) bw.write("\n");
+                bw.write(id.toString() + "\t" + curidsToTitles.get(id) + "\n");
             }
             bw.close();
         }
@@ -95,17 +95,17 @@ public class PageMapLineParser {
             e.printStackTrace();
             System.exit(-1);
         }
-
-        // Writes map from page titles (first column) to resolved page titles (second column)
-        count = 0;
-        file = new File(dataFolder + "/" + "unresTitles2resTitles.txt");
+    }
+    
+    // Writes map from unresolved page titles (first column) to resolved page titles (second column)
+    private void writePageTitlesToResTitles(){
+        Path filePath = Paths.get(outputDir, JWPLConstants.unresTitlesToResTitles);
+        File file = new File(filePath.toString());
         try{
             FileWriter fw = new FileWriter(file.getAbsoluteFile());
             BufferedWriter bw = new BufferedWriter(fw);
             for(String title : uptToRpt.keySet()){
-                count++;
-                bw.write(title + "\t" + uptToRpt.get(title));
-                if(count != uptToRpt.keySet().size()) bw.write("\n");
+                bw.write(title + "\t" + uptToRpt.get(title) + "\n");
             }
             bw.close();
         }
@@ -113,17 +113,17 @@ public class PageMapLineParser {
             e.printStackTrace();
             System.exit(-1);
         }
-
-        // Writes list of Cur Ids which belong to list pages
-        count = 0;
-        file = new File(dataFolder + "/" + "resListPages.txt");
+    }
+    
+    // Writes list of ids which belong to list pages
+    private void writeListPageIds(){
+        Path filePath = Paths.get(outputDir, JWPLConstants.resListPages);
+        File file = new File(filePath.toString());
         try{
             FileWriter fw = new FileWriter(file.getAbsoluteFile());
             BufferedWriter bw = new BufferedWriter(fw);
             for(Integer id : listPages){
-                count++;
-                bw.write(id.toString());
-                if(count != listPages.size()) bw.write("\n");
+                bw.write(id.toString() + "\n");
             }
             bw.close();
         }
@@ -131,6 +131,14 @@ public class PageMapLineParser {
             e.printStackTrace();
             System.exit(-1);
         }
+    }
+
+    private void writeToFiles(){
+        writePageIds();
+        writeResPageIds();
+        writePageIdsToTitles();
+        writePageTitlesToResTitles();
+        writeListPageIds();
     }
 
     public void parsePageMap(String pageMapFile){

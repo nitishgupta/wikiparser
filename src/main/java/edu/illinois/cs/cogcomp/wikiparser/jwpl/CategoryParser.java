@@ -1,11 +1,14 @@
 package edu.illinois.cs.cogcomp.wikiparser.jwpl;
 
+import edu.illinois.cs.cogcomp.wikiparser.constants.JWPLConstants;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.BufferedWriter;
 import java.io.IOException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.*;
 
 /**
@@ -14,46 +17,24 @@ import java.util.*;
  *  that will be stored in a folder called category_output
  */
 public class CategoryParser {
+    private String outputDir;
     public static Map<Integer, String> idToDisambCat = new HashMap(); // Maps category id to disambiguation categories
     public static Map<Integer, String> idToCat = new HashMap();  // Maps category id to category titles
     private static Map<String, Integer> catToId = new HashMap();  // Maps category titles to category id
+    
+    public CategoryParser(String outputDir){
+        this.outputDir = outputDir;
+    }
 
     private void writeToFiles(){
-        String projectFolder = System.getProperty("user.dir");
-        String dataFolder = projectFolder + "/category_output";
-        File directory = new File(dataFolder);
-        if(! directory.exists()){
-            directory.mkdir();
-        }
-        int count = 0;
-
         // Writes map from category id (first column) to category title (second column)
-        File file = new File(dataFolder + "/" + "id2Title.txt");
+        Path filePath = Paths.get(outputDir, JWPLConstants.idsToTitles);
+        File file = new File(filePath.toString());
         try{
             FileWriter fw = new FileWriter(file.getAbsoluteFile());
             BufferedWriter bw = new BufferedWriter(fw);
             for(Integer id : idToCat.keySet()){
-                count++;
-                bw.write(id.toString() + "\t" + idToCat.get(id));
-                if(count != idToCat.keySet().size()) bw.write("\n");
-            }
-            bw.close();
-        }
-        catch (IOException e){
-            e.printStackTrace();
-            System.exit(-1);
-        }
-
-        // Write map from category title (first column) to category id (second column)
-        count = 0;
-        file = new File(dataFolder + "/" + "title2Id.txt");
-        try{
-            FileWriter fw = new FileWriter(file.getAbsoluteFile());
-            BufferedWriter bw = new BufferedWriter(fw);
-            for(String title : catToId.keySet()){
-                count++;
-                bw.write(title + "\t" + catToId.get(title));
-                if(count != catToId.keySet().size()) bw.write("\n");
+                bw.write(id.toString() + "\t" + idToCat.get(id) + "\n");
             }
             bw.close();
         }

@@ -9,16 +9,18 @@ import edu.illinois.cs.cogcomp.wikiparser.constants.JWPLConstants;
  */
 public class JWPLParser {
     public static void main(String [] args){
+        String outputDir = args[0];
+        
         System.out.println("Starts parsing PageMapLine.txt");
-        PageMapLineParser parser1 = new PageMapLineParser();
+        PageMapLineParser parser1 = new PageMapLineParser(outputDir);
         parser1.parsePageMap(JWPLConstants.pageMapFile);
 
         System.out.println("Starts parsing Category.txt");
-        CategoryParser parser2 = new CategoryParser();
+        CategoryParser parser2 = new CategoryParser(outputDir);
         parser2.parseCategory(JWPLConstants.categoryFile);
 
         System.out.println("Starting to parse Page_Categories.txt");
-        CategoryPagesParser parser3 = new CategoryPagesParser();
+        CategoryPagesParser parser3 = new CategoryPagesParser(outputDir);
         parser3.parseCategoryPages(JWPLConstants.categoryPageFile);
     }
 }
