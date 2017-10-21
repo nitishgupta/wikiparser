@@ -34,7 +34,7 @@ public class CategoryParser {
             FileWriter fw = new FileWriter(file.getAbsoluteFile());
             BufferedWriter bw = new BufferedWriter(fw);
             for(Integer id : idToCat.keySet()){
-                bw.write(id.toString() + "\t" + idToCat.get(id) + "\n");
+                bw.write(id.toString() + "\t" + idToCat.get(id) + "\n");  // Each id exists on a new line
             }
             bw.close();
         }
@@ -56,7 +56,7 @@ public class CategoryParser {
                 String title = args[2];
                 title = title.replace("\\", ""); // Removes escape character '\'
                 title = title.trim();
-                if(title.isEmpty()) continue;
+                if(title.isEmpty()) continue;  // Do not do anything if title is empty after trimming
                 if(title.toLowerCase().contains("disambig")){ // Stores ids and titles of disambiguation categories
                     idToDisambCat.put(catId, title);
                 }
@@ -64,7 +64,7 @@ public class CategoryParser {
                 catToId.put(title, catId);  // Maps title to id
             }
             fileReader.close();
-            writeToFiles();
+            writeToFiles(); // Writes output to file
         } catch (IOException e) {
             e.printStackTrace();
         }

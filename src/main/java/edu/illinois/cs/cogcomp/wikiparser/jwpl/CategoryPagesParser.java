@@ -124,15 +124,15 @@ public class CategoryPagesParser {
             // Check intersection of resDisambPageIds and resNonDisambPageIds
             Set<Integer> intersection = new HashSet<Integer>(disambPageIds);
             intersection.retainAll(nondisambPageIds);
-            System.out.println("Intersection size: " + intersection.size());
+            assert(intersection.isEmpty());  // Check that the intersection of both is null
             
             // Check union of resDisambPageIds and resNonDisambPageIds;
             Set<Integer> union = new HashSet<Integer>(disambPageIds);
             union.addAll(nondisambPageIds);
-            System.out.println("Union: " + union.equals(PageMapLineParser.resolvedCurIds));
+            assert(union.equals(PageMapLineParser.resolvedCurIds)); // Check that the union of both is equal to the set of all resolved page ids
 
             fileReader.close();
-            writeToFiles();
+            writeToFiles();  // Writes outputs to files
         } catch (IOException e) {
             e.printStackTrace();
         }

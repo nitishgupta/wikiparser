@@ -1,7 +1,7 @@
 package edu.illinois.cs.cogcomp.wikiparser.constants;
 
 /**
- *  This class stores the hard coded file paths for the JWPL output files
+ *  This class stores the hard coded file paths for the JWPL input and output files
  */
 public class JWPLConstants {
     // Input files

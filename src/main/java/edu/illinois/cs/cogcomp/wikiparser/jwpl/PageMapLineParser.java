@@ -36,8 +36,8 @@ public class PageMapLineParser {
             Integer resolvedId = null;
             if(uidToRid.containsKey(id)) resolvedId = uidToRid.get(id);
             if(curidsToTitles.containsKey(id)) unresolvedPageTitle = curidsToTitles.get(id);
-            if(resolvedId != null && curidsToTitles.containsKey(resolvedId)) resolvedPageTitle = curidsToTitles.get(resolvedId);
-            if(unresolvedPageTitle != null && resolvedPageTitle != null){
+            if(resolvedId != null && curidsToTitles.containsKey(resolvedId)) resolvedPageTitle = curidsToTitles.get(resolvedId); // Check if resolved page ids exists
+            if(unresolvedPageTitle != null && resolvedPageTitle != null){  // Maps unresolved page titles to resolved page titles
                 uptToRpt.put(unresolvedPageTitle, resolvedPageTitle);
             }
         }
@@ -51,7 +51,7 @@ public class PageMapLineParser {
             FileWriter fw = new FileWriter(file.getAbsoluteFile());
             BufferedWriter bw = new BufferedWriter(fw);
             for(Integer id : curIds){
-                bw.write(id.toString() + "\n");
+                bw.write(id.toString() + "\n");  // Each id exists on new line
             }
             bw.close();
         }
@@ -69,7 +69,7 @@ public class PageMapLineParser {
             FileWriter fw = new FileWriter(file.getAbsoluteFile());
             BufferedWriter bw = new BufferedWriter(fw);
             for(Integer id : resolvedCurIds){
-                bw.write(id.toString() + "\n");
+                bw.write(id.toString() + "\n");  // Each id exists on a new line
             }
             bw.close();
         }
@@ -87,7 +87,7 @@ public class PageMapLineParser {
             FileWriter fw = new FileWriter(file.getAbsoluteFile());
             BufferedWriter bw = new BufferedWriter(fw);
             for(Integer id : curidsToTitles.keySet()){
-                bw.write(id.toString() + "\t" + curidsToTitles.get(id) + "\n");
+                bw.write(id.toString() + "\t" + curidsToTitles.get(id) + "\n"); // Each page exists on a new line
             }
             bw.close();
         }
@@ -105,7 +105,7 @@ public class PageMapLineParser {
             FileWriter fw = new FileWriter(file.getAbsoluteFile());
             BufferedWriter bw = new BufferedWriter(fw);
             for(String title : uptToRpt.keySet()){
-                bw.write(title + "\t" + uptToRpt.get(title) + "\n");
+                bw.write(title + "\t" + uptToRpt.get(title) + "\n");  // Each title exists on a new line
             }
             bw.close();
         }
@@ -123,7 +123,7 @@ public class PageMapLineParser {
             FileWriter fw = new FileWriter(file.getAbsoluteFile());
             BufferedWriter bw = new BufferedWriter(fw);
             for(Integer id : listPages){
-                bw.write(id.toString() + "\n");
+                bw.write(id.toString() + "\n");  // Each id exists on a new line
             }
             bw.close();
         }
@@ -167,7 +167,7 @@ public class PageMapLineParser {
             }
             fileReader.close();
             mapUnresolvedToResolved();
-            writeToFiles();
+            writeToFiles();  // Writes outputs to files
         } catch (IOException e) {
             e.printStackTrace();
         }

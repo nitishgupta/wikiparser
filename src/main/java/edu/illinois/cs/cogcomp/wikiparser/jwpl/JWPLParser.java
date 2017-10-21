@@ -19,7 +19,7 @@ public class JWPLParser {
         CategoryParser parser2 = new CategoryParser(outputDir);
         parser2.parseCategory(JWPLConstants.categoryFile);
 
-        System.out.println("Starting to parse Page_Categories.txt");
+        System.out.println("Starts parsing Page_Categories.txt");
         CategoryPagesParser parser3 = new CategoryPagesParser(outputDir);
         parser3.parseCategoryPages(JWPLConstants.categoryPageFile);
     }
