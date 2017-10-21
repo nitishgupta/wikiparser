@@ -120,6 +120,16 @@ public class CategoryPagesParser {
             // Creates list of resolved Cur Ids of non-disambiguation pages
             nondisambPageIds.addAll(PageMapLineParser.resolvedCurIds);
             nondisambPageIds.removeAll(disambPageIds);
+            
+            // Check intersection of resDisambPageIds and resNonDisambPageIds
+            Set<Integer> intersection = new HashSet<Integer>(disambPageIds);
+            intersection.retainAll(nondisambPageIds);
+            System.out.println("Intersection size: " + intersection.size());
+            
+            // Check union of resDisambPageIds and resNonDisambPageIds;
+            Set<Integer> union = new HashSet<Integer>(disambPageIds);
+            union.addAll(nondisambPageIds);
+            System.out.println("Union: " + union.equals(PageMapLineParser.resolvedCurIds));
 
             fileReader.close();
             writeToFiles();
