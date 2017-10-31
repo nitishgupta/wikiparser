@@ -27,8 +27,8 @@ public class CategoryPagesParser {
         this.outputDir = outputDir;
     }
     
-    // Writes map from resolved cur ids to set of category titles
     private void writeResIdsToCatTitles(){
+        // Writes map from resolved cur ids to set of category titles
         Path filePath = Paths.get(outputDir, JWPLConstants.resIdsToCatTitles);
         File file = new File(filePath.toString());
         try{
@@ -49,8 +49,8 @@ public class CategoryPagesParser {
         }
     }
     
-    // Writes list of resolved cur ids of disambiguation pages
     private void writeResIdsDisambPages(){
+        // Writes list of resolved cur ids of disambiguation pages
         Path filePath = Paths.get(outputDir, JWPLConstants.resDisambPageIds);
         File file = new File(filePath.toString());
         try {
@@ -65,8 +65,8 @@ public class CategoryPagesParser {
         }
     }
     
-    // Writes list of resolved cur ids of non-disambiguation pages
     private void writeResIdsNonDisambPage(){
+        // Writes list of resolved cur ids of non-disambiguation pages
         Path filePath = Paths.get(outputDir, JWPLConstants.resNonDisambPageIds);
         File file = new File(filePath.toString());
         try {

@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package edu.illinois.cs.cogcomp.wikiparser.wikiparse;
 
 import edu.illinois.cs.cogcomp.wikiparser.ds.WikiPage;
@@ -20,13 +15,14 @@ import java.util.*;
  * as befits our purposes.
  */
 public class Serialize {
-    /**
-     * Performs object serialization on a list of WikiPage data 
-     * 
-     * @param data - a list of WikiPage data structures
-     * @param outfile - path of directory where file is to be written too
-     */
+
     public static void serialize(List<WikiPage> data, String outfile){
+        /**
+        * Performs object serialization on a list of WikiPage data 
+        * 
+        * @param data - a list of WikiPage data structures
+        * @param outfile - path of directory where file is to be written too
+        */
         try {
          FileOutputStream fileOut = new FileOutputStream(outfile);
          ObjectOutputStream out = new ObjectOutputStream(fileOut);
@@ -39,17 +35,17 @@ public class Serialize {
       }
     }
     
-    /**
-     * Performs deserialization on the object file
-     * 
-     * *** Important note: Return type of this function may change in the future.
-     *                     It is set to void for now but we may have to change it
-     *                     according to future utilization of this function.
-     * 
-     * @param filename - path and name of file to be deserialized back into 
-     *                   a list of WikiPage object
-     */
     public static void deserialize(String filename){
+        /**
+        * Performs deserialization on the object file
+        * 
+        * *** Important note: Return type of this function may change in the future.
+        *                     It is set to void for now but we may have to change it
+        *                     according to future utilization of this function.
+        * 
+        * @param filename - path and name of file to be deserialized back into 
+        *                   a list of WikiPage object
+        */
         List<WikiPage> res = null;
         try {
             FileInputStream fileIn = new FileInputStream(filename);

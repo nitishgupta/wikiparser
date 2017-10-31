@@ -43,8 +43,8 @@ public class PageMapLineParser {
         }
     }
     
-    // Write list of all page ids
     private void writePageIds(){
+        // Write list of all page ids
         Path filePath = Paths.get(outputDir, JWPLConstants.pageIds);
         File file = new File(filePath.toString());
         try{
@@ -61,8 +61,8 @@ public class PageMapLineParser {
         }
     }
     
-    // Writes list of resolved page ids
     private void writeResPageIds(){
+        // Writes list of resolved page ids
         Path filePath = Paths.get(outputDir, JWPLConstants.resPageIds);
         File file = new File(filePath.toString());
         try{
@@ -79,8 +79,8 @@ public class PageMapLineParser {
         }
     }
     
-    // Writes map from page ids to page titles
     private void writePageIdsToTitles(){
+        // Writes map from page ids to page titles
         Path filePath = Paths.get(outputDir, JWPLConstants.pageIdsToTitles);
         File file = new File(filePath.toString());
                 try{
@@ -97,8 +97,8 @@ public class PageMapLineParser {
         }
     }
     
-    // Writes map from unresolved page titles (first column) to resolved page titles (second column)
     private void writePageTitlesToResTitles(){
+        // Writes map from unresolved page titles (first column) to resolved page titles (second column)
         Path filePath = Paths.get(outputDir, JWPLConstants.unresTitlesToResTitles);
         File file = new File(filePath.toString());
         try{
@@ -115,8 +115,8 @@ public class PageMapLineParser {
         }
     }
     
-    // Writes list of ids which belong to list pages
     private void writeListPageIds(){
+        // Writes list of ids which belong to list pages
         Path filePath = Paths.get(outputDir, JWPLConstants.resListPages);
         File file = new File(filePath.toString());
         try{
