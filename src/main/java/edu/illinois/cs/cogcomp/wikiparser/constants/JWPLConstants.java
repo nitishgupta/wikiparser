@@ -4,6 +4,9 @@ package edu.illinois.cs.cogcomp.wikiparser.constants;
  *  This class stores the hard coded file paths for the JWPL input and output files
  */
 public class JWPLConstants {
+    // Output Dir
+    public static final String jwplOutDir = "jwplOutputDir";
+
     // Input files
     public static final String categoryFile = "/shared/preprocessed/ngupta19/wikidatamachine/Category.txt"; 
     public static final String categoryPageFile = "/shared/preprocessed/ngupta19/wikidatamachine/category_pages.txt";
