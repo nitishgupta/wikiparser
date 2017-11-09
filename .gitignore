@@ -1,3 +1,11 @@
+# User added
+logs/
+*.txt
+*.iml
+
+# Idea
+.idea
+
 # Maven
 target/
 
