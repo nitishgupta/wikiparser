@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package edu.illinois.cs.cogcomp.wikiparser.jwpl;
+package edu.illinois.cs.cogcomp.wikiparser.jwpl.datamachine;
 
 import de.tudarmstadt.ukp.wikipedia.datamachine.domain.DataMachineFiles;
 import de.tudarmstadt.ukp.wikipedia.datamachine.domain.JWPLDataMachine;

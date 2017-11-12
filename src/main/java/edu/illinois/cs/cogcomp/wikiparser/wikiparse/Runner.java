@@ -5,9 +5,6 @@
  */
 package edu.illinois.cs.cogcomp.wikiparser.wikiparse;
 
-import java.io.File;
-import edu.illinois.cs.cogcomp.wikiparser.jwpl.DataMachine;
-
 /**
  *  This class acts as the new entry point for the wikiparser code.  It checks if the output folder
  *  of the JWPL code already exists.  If it does not, run the DataMachine main function. Next, it
