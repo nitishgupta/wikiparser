@@ -10,6 +10,7 @@ import java.io.BufferedWriter;
 import java.io.IOException;
 import java.util.*;
 import edu.illinois.cs.cogcomp.wikiparser.constants.JWPLConstants;
+import edu.illinois.cs.cogcomp.wikiparser.utils.ParserLogger;
 
 /**
  *  This class receives the PageMapLine.txt file as input.  It will
@@ -25,6 +26,7 @@ public class PageMapLineParser {
     public static Map<Integer, String> curidsToTitles;  // Map from all Cur Ids to page titles
     public static Map<Integer, String> resCurIdsToTitles;  // Map from all Cur Ids to page titles
     public static Map<Integer, String> resCurIdsToTitles_nonList; // Map from all Cur Ids to page titles
+    private ParserLogger logger = new ParserLogger("PageMapLineParser"); 
     
     public PageMapLineParser(String outputDir){
         this.outputDir = outputDir;
@@ -37,7 +39,7 @@ public class PageMapLineParser {
         System.out.println("[5] Resolved List Page Ids: "+ JWPLConstants.resListPages);
 
         System.out.println("[#] Output Folder: " + outputDir);
-
+        logger.log.info("Parsing PageMapLine.txt");
         curIds = new HashSet(); // Stores all CurIds, both resolved and unresolved
         resolvedCurIds = new HashSet<Integer>();  // Stores resolved Cur Ids
         listPages = new HashSet<Integer>();  // Stores Cur Ids which are list pages
@@ -103,6 +105,7 @@ public class PageMapLineParser {
 
     private void writeCurId2Title(){
         // Writes map from page ids to page titles
+        logger.log.info("Writes map from page ids to page titles");
         Path filePath = Paths.get(outputDir, JWPLConstants.curId2Title);
         File file = new File(filePath.toString());
         try{
@@ -114,6 +117,7 @@ public class PageMapLineParser {
             bw.close();
         }
         catch (IOException e){
+            logger.log.severe(e.toString());
             e.printStackTrace();
             System.exit(-1);
         }
@@ -121,6 +125,7 @@ public class PageMapLineParser {
 
     private void writeResCurId2ResTitle(){
         // Writes map from page ids to page titles
+        logger.log.info("Writes map from page ids to page titles");
         Path filePath = Paths.get(outputDir, JWPLConstants.resCurId2ResTitle);
         File file = new File(filePath.toString());
         try{
@@ -132,6 +137,7 @@ public class PageMapLineParser {
             bw.close();
         }
         catch (IOException e){
+            logger.log.severe(e.toString());
             e.printStackTrace();
             System.exit(-1);
         }
@@ -139,6 +145,7 @@ public class PageMapLineParser {
 
     private void writeResCurId2ResTitle_nonList() {
         // Writes map from page ids to page titles
+        logger.log.info("Writes map from page ids to page titles");
         Path filePath = Paths.get(outputDir, JWPLConstants.resCurId2ResTitle_nonList);
         File file = new File(filePath.toString());
         try{
@@ -150,6 +157,7 @@ public class PageMapLineParser {
             bw.close();
         }
         catch (IOException e){
+            logger.log.severe(e.toString());
             e.printStackTrace();
             System.exit(-1);
         }
@@ -175,6 +183,7 @@ public class PageMapLineParser {
     
     private void writeListPageIdsTitle(){
         // Writes list of ids which belong to list pages
+        logger.log.info("Writes list of ids which belong to list pages");
         Path filePath = Paths.get(outputDir, JWPLConstants.resListPageCurId2ResTitle);
         File file = new File(filePath.toString());
         try{
@@ -187,6 +196,7 @@ public class PageMapLineParser {
             bw.close();
         }
         catch (IOException e){
+            logger.log.severe(e.toString());
             e.printStackTrace();
             System.exit(-1);
         }
@@ -247,7 +257,9 @@ public class PageMapLineParser {
             fileReader.close();
             mapUnresolvedToResolved();
             writeToFiles();  // Writes outputs to files
+            logger.log.info("Parsing of PageMapLine.txt done");
         } catch (IOException e) {
+            logger.log.severe(e.toString());
             e.printStackTrace();
         }
     }

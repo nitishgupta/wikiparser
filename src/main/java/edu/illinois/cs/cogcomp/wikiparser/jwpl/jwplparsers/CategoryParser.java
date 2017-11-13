@@ -10,6 +10,7 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.*;
+import edu.illinois.cs.cogcomp.wikiparser.utils.ParserLogger;
 
 /**
  *  This class receives the Category.txt file as input.
@@ -21,8 +22,10 @@ public class CategoryParser {
     public static Map<Integer, String> disambigCatIdToDisambCatTitle; // Maps category id to disambiguation categories
     public static Map<Integer, String> idToCat;  // Maps category id to category titles
     private static Map<String, Integer> catToId;  // Maps category titles to category id
+    private ParserLogger logger = new ParserLogger("CategoryParser"); 
     
     public CategoryParser(String outputDir){
+        logger.log.info("Parsing Category.txt");
         this.outputDir = outputDir;
         System.out.println("Category Parser");
         System.out.println("Parses Category.txt to produce:");
@@ -37,6 +40,7 @@ public class CategoryParser {
 
     private void writeToFiles(){
         // Writes map from category id (first column) to category title (second column)
+        logger.log.info("Writes map from category id to category title");
         Path filePath = Paths.get(outputDir, JWPLConstants.catIdToCatTitle);
         File file = new File(filePath.toString());
         try{
@@ -48,6 +52,7 @@ public class CategoryParser {
             bw.close();
         }
         catch (IOException e){
+            logger.log.severe(e.toString());
             e.printStackTrace();
             System.exit(-1);
         }
@@ -75,6 +80,7 @@ public class CategoryParser {
             fileReader.close();
             writeToFiles(); // Writes output to file
         } catch (IOException e) {
+            logger.log.severe(e.toString());
             e.printStackTrace();
         }
     }

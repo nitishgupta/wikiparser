@@ -15,7 +15,6 @@ public class Runner {
         WikiExtractParser wikiparser = new WikiExtractParser();
         wikiparser.wikiDirectory = args[0];
         wikiparser.outputDir = args[1];
-        wikiparser.logger.info("Starting to Parse Wiki Texts");
         wikiparser.extractWiki();
     }
 }

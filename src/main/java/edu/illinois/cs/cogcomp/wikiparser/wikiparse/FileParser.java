@@ -9,6 +9,7 @@ import java.util.regex.Pattern;
 
 import edu.illinois.cs.cogcomp.wikiparser.utils.FileUtils;
 import edu.illinois.cs.cogcomp.wikiparser.utils.Pair;
+import edu.illinois.cs.cogcomp.wikiparser.utils.ParserLogger;
 
 /**
  *

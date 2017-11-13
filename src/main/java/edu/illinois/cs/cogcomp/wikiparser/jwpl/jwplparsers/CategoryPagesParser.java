@@ -10,6 +10,7 @@ import java.io.IOException;
 import java.util.*;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import edu.illinois.cs.cogcomp.wikiparser.utils.ParserLogger;
 
 /**
  *
@@ -21,11 +22,11 @@ public class CategoryPagesParser {
     private static Set<Integer> disambPageResCurIds; // Stores resolved Ids of disambiguation pages
     private static Set<Integer> nondisambPageResCurIds; // Stores resolved Ids of non-disambiguation pages
     private static Set<Integer> nondisambPageResCurIds_noList; // Stores resolved Ids of non-disambiguation pages
-
+    private ParserLogger logger = new ParserLogger("CategoryPagesParser"); 
 
     public CategoryPagesParser(String outputDir) {
         this.outputDir = outputDir;
-
+        logger.log.info("Parsing CategoryPages.txt");
         System.out.println("CategoryPages  Parser");
         System.out.println("Parses category_pages.txt to produce:");
         System.out.println("[1] redCurIds -> Category Tiles: " + JWPLConstants.resCurIdToCatTitles);
@@ -43,6 +44,7 @@ public class CategoryPagesParser {
     
     private void writeResIdsToCatTitles(){
         // Writes map from resolved cur ids to set of category titles
+        logger.log.info("Writes map from resolved cur ids to set of category titles");
         Path filePath = Paths.get(outputDir, JWPLConstants.resCurIdToCatTitles);
         File file = new File(filePath.toString());
         try{
@@ -61,6 +63,7 @@ public class CategoryPagesParser {
             bw.close();
         }
         catch (IOException e){
+            logger.log.severe(e.toString());
             e.printStackTrace();
             System.exit(-1);
         }
@@ -69,6 +72,7 @@ public class CategoryPagesParser {
     private void writeCurId2Title(Set<Integer> curIds, Path filePath) {
         // Writes map from page ids to page titles
         // Path filePath = Paths.get(outputDir, JWPLConstants.resCurId2ResTitle);
+        logger.log.info("Writes map from page ids to page titles");
         System.out.println("Number of titles in resCurIdsToTitles: " + PageMapLineParser.resCurIdsToTitles.keySet().size());
 
         File file = new File(filePath.toString());
@@ -87,6 +91,7 @@ public class CategoryPagesParser {
             bw.close();
         }
         catch (IOException e){
+            logger.log.severe(e.toString());
             e.printStackTrace();
             System.exit(-1);
         }
@@ -173,7 +178,9 @@ public class CategoryPagesParser {
             nondisambPageResCurIds_noList.removeAll(disambPageResCurIds);
 
             writeToFiles();  // Writes outputs to files
+            logger.log.info("Parsing of CategoryPages.txt done");
         } catch (IOException e) {
+            logger.log.severe(e.toString());
             e.printStackTrace();
         }
     }

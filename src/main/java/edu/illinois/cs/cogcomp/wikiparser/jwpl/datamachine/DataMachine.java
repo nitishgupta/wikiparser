@@ -13,9 +13,14 @@ import de.tudarmstadt.ukp.wikipedia.wikimachine.domain.ISnapshotGenerator;
 import de.tudarmstadt.ukp.wikipedia.wikimachine.factory.IEnvironmentFactory;
 import de.tudarmstadt.ukp.wikipedia.wikimachine.factory.SpringFactory;
 import edu.illinois.cs.cogcomp.wikiparser.constants.JWPLConstants;
-import edu.illinois.cs.cogcomp.wikiparser.wikiparse.WikiExtractParser;
 import java.io.File;
 import java.nio.file.Paths;
+import java.util.logging.FileHandler;
+import java.util.logging.Logger;
+import java.util.logging.SimpleFormatter;
+import java.util.Calendar;
+import java.text.SimpleDateFormat;
+import edu.illinois.cs.cogcomp.wikiparser.utils.ParserLogger;
 
 import javax.xml.XMLConstants;
 import javax.xml.parsers.SAXParserFactory;
@@ -26,36 +31,28 @@ import javax.xml.parsers.SAXParserFactory;
 public class DataMachine {
     private static final long startTime = System.currentTimeMillis();
     private static final IEnvironmentFactory environmentFactory = SpringFactory.getInstance();
-    private static final ILogger logger;
-
-    static {
-        logger = environmentFactory.getLogger();
-    }
-
-
 
     public static void main(String [] args){
         System.out.println("Running JWPL DataMachine parser to generate 11 output files");
         String jwplInputDir = args[0];
         String jwplOutputDir = Paths.get(jwplInputDir, "output").toString();
         File f = new File(jwplOutputDir);
-        WikiExtractParser wikiparser = new WikiExtractParser();
+        ParserLogger logger = new ParserLogger("DataMachine");
 
         System.out.println("Wiki Dump Files Dir: " + jwplInputDir);
         System.out.println("JWPL Output Dir: " + jwplOutputDir);
 
         if(!f.exists()){  // Runs DataMachine if output folder does not exist
            try{
+               logger.log.info("Running JWPL DataMachine");
                runDM(jwplInputDir);
            } catch(Exception e){
-               System.out.println("Failed!!");
-               wikiparser.logger.severe(e.toString());
+               logger.log.severe("Exception: " + e.toString());
            }
         } else {
             System.out.println("Output folder already exists.");
         }
-
-        System.out.println("Done!");
+        logger.log.info("DataMachine done");
     }
     
     public static void runDM(String jwplInputDir) throws Exception {

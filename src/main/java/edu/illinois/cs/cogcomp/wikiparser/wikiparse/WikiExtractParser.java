@@ -9,6 +9,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.logging.FileHandler;
 import java.util.logging.Logger;
 import java.util.logging.SimpleFormatter;
+import edu.illinois.cs.cogcomp.wikiparser.utils.ParserLogger;
 
 /**
  * This class receives as input the output of the python parser which is a folder of folder 
@@ -16,7 +17,7 @@ import java.util.logging.SimpleFormatter;
  * serialized lists of WikiPage objects
  */
 public class WikiExtractParser {
-    public Logger logger = Logger.getLogger("WikiExtractParser");
+    private ParserLogger logger = new ParserLogger("WikiExtractParser");
     public String logfile = System.getProperty("user.dir") + "/logs/ExtractedWiki.log";
     public String wikiDirectory;
     public String outputDir;
@@ -25,20 +26,6 @@ public class WikiExtractParser {
     
     public WikiExtractParser() {
         parser = getBoundedThreadPool();
-        try {
-                // This block configure the logger with handler and formatter
-                File dir = new File("logs");
-                dir.mkdir();
-                fh = new FileHandler(logfile);
-                logger.addHandler(fh);
-                SimpleFormatter formatter = new SimpleFormatter();
-                fh.setFormatter(formatter);
-                logger.setUseParentHandlers(false);
-                // the following statement is used to log any messages
-                logger.info("Static Function");
-        } catch (Exception e) {
-                e.printStackTrace();
-        }
     }
     
     public static ThreadPoolExecutor getBoundedThreadPool() {
@@ -65,18 +52,18 @@ public class WikiExtractParser {
 	Iterator<File> i = org.apache.commons.io.FileUtils.iterateFiles(inDir, null, true);
         
         int totalFiles = 0;
-        
+        logger.log.info("Starting to Parse Wiki Texts");
         // Reads all of the files in the given directory
         while(i.hasNext()){
             totalFiles ++;
             File file = i.next();
             String infilepath = file.toString();
             String outfilepath = outputDir + "/tmp" + Integer.toString(totalFiles) + ".ser";
-            
+            logger.log.info("Parsing Wiki Text " + Integer.toString(totalFiles));
             // Give this to thread runner
-            parser.execute(new FileParser(infilepath, outfilepath, logger));
+            parser.execute(new FileParser(infilepath, outfilepath, logger.log));
         }
-        
+        logger.log.info("Total Files: " + Integer.toString(totalFiles));
         System.out.println("[#] Total Files: " + totalFiles);
     }
 }
