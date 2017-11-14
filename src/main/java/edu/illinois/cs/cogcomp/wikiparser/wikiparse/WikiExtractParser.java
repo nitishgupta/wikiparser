@@ -66,4 +66,11 @@ public class WikiExtractParser {
         logger.log.info("Total Files: " + Integer.toString(totalFiles));
         System.out.println("[#] Total Files: " + totalFiles);
     }
+    
+    public static void main(String [] args){
+        WikiExtractParser wikiparser = new WikiExtractParser();
+        wikiparser.wikiDirectory = args[0];
+        wikiparser.outputDir = args[1];
+        wikiparser.extractWiki();
+    }
 }
