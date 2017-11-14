@@ -22,9 +22,10 @@ public class CategoryParser {
     public static Map<Integer, String> disambigCatIdToDisambCatTitle; // Maps category id to disambiguation categories
     public static Map<Integer, String> idToCat;  // Maps category id to category titles
     private static Map<String, Integer> catToId;  // Maps category titles to category id
-    private ParserLogger logger = new ParserLogger("CategoryParser"); 
+    private ParserLogger logger; 
     
-    public CategoryParser(String outputDir){
+    public CategoryParser(String outputDir, ParserLogger logger){
+        this.logger = logger;
         logger.log.info("Parsing Category.txt");
         this.outputDir = outputDir;
         System.out.println("Category Parser");

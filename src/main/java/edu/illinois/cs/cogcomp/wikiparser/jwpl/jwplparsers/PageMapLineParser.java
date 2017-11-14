@@ -26,10 +26,11 @@ public class PageMapLineParser {
     public static Map<Integer, String> curidsToTitles;  // Map from all Cur Ids to page titles
     public static Map<Integer, String> resCurIdsToTitles;  // Map from all Cur Ids to page titles
     public static Map<Integer, String> resCurIdsToTitles_nonList; // Map from all Cur Ids to page titles
-    private ParserLogger logger = new ParserLogger("PageMapLineParser"); 
+    private ParserLogger logger; 
     
-    public PageMapLineParser(String outputDir){
+    public PageMapLineParser(String outputDir, ParserLogger logger){
         this.outputDir = outputDir;
+        this.logger = logger;
         System.out.println("PageMapLine Parser");
         System.out.println("Parses PageMapLine.txt to produce:");
         System.out.println("[1] CurIds: " + JWPLConstants.pageIds);

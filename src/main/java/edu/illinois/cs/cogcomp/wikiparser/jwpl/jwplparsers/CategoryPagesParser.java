@@ -22,9 +22,10 @@ public class CategoryPagesParser {
     private static Set<Integer> disambPageResCurIds; // Stores resolved Ids of disambiguation pages
     private static Set<Integer> nondisambPageResCurIds; // Stores resolved Ids of non-disambiguation pages
     private static Set<Integer> nondisambPageResCurIds_noList; // Stores resolved Ids of non-disambiguation pages
-    private ParserLogger logger = new ParserLogger("CategoryPagesParser"); 
+    private ParserLogger logger; 
 
-    public CategoryPagesParser(String outputDir) {
+    public CategoryPagesParser(String outputDir, ParserLogger logger) {
+        this.logger = logger;
         this.outputDir = outputDir;
         logger.log.info("Parsing CategoryPages.txt");
         System.out.println("CategoryPages  Parser");
