@@ -1,6 +1,7 @@
 package edu.illinois.cs.cogcomp.wikiparser.wikiparse;
 
 import edu.illinois.cs.cogcomp.wikiparser.utils.FileUtils;
+import edu.illinois.cs.cogcomp.wikiparser.constants.WikiparseConstants;
 import java.io.File;
 import java.io.IOException;
 import java.util.*;
@@ -84,7 +85,7 @@ public class PageIdTitleParser implements Runnable{
     
     public void writeToFiles(){
         // Writes id to title map to file
-        Path filePath = Paths.get(outputDir, "PageIdToTitleMap.txt");
+        Path filePath = Paths.get(outputDir, WikiparseConstants.PageIdTitleOutput);
         File file = new File(filePath.toString());
         logger.info("Writing to output file");
             try{
