@@ -212,7 +212,7 @@ public class FileParser implements Runnable {
         else return null;
     }
     
-    public String[] breakDocs(String filename){
+    public static String[] breakDocs(String filename){
         /**
          * Takes the name of the file to parse as input
          * Returns: an array of documents as strings
