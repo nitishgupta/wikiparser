@@ -26,6 +26,7 @@ public class PageMapLineParser {
     public static Map<Integer, String> curidsToTitles;  // Map from all Cur Ids to page titles
     public static Map<Integer, String> resCurIdsToTitles;  // Map from all Cur Ids to page titles
     public static Map<Integer, String> resCurIdsToTitles_nonList; // Map from all Cur Ids to page titles
+    public static Map<Integer, List<Integer>> resCurId2redirects;
     private ParserLogger logger; 
     
     public PageMapLineParser(String outputDir, ParserLogger logger){
@@ -48,6 +49,7 @@ public class PageMapLineParser {
         curidsToTitles = new HashMap();  // Map from all Cur Ids to page titles
         resCurIdsToTitles = new HashMap();  // Map from all Cur Ids to page titles
         resCurIdsToTitles_nonList = new HashMap();  // Map from all Cur Ids to page titles
+        resCurId2redirects = new HashMap();
     }
 
     private void writeCurId2Title(){
@@ -131,11 +133,39 @@ public class PageMapLineParser {
         }
     }
 
+    private void writeResCurId2Redirects() {
+        logger.log.info("Writes Resolved CurID to Redirect CurIDs map.");
+        Path filePath = Paths.get(outputDir, JWPLConstants.resCurId2Redirects);
+        File file = new File(filePath.toString());
+        try{
+            FileWriter fw = new FileWriter(file.getAbsoluteFile());
+            BufferedWriter bw = new BufferedWriter(fw);
+            for(Integer id : resCurId2redirects.keySet()){
+                List<Integer> redirectIds = resCurId2redirects.get(id);
+                StringBuffer redirects = new StringBuffer();
+                for (Integer redid : redirectIds) {
+                    redirects.append(redid).append(" ");
+                }
+                String redirectString = redirects.toString().trim();
+
+
+                bw.write(id + "\t" + redirectString + "\n");
+            }
+            bw.close();
+        }
+        catch (IOException e){
+            logger.log.severe(e.toString());
+            e.printStackTrace();
+            System.exit(-1);
+        }
+    }
+
     private void writeToFiles(){
         writeCurId2Title();
         writeResCurId2ResTitle();
         writeResCurId2ResTitle_nonList();
         writeListPageIdsTitle();
+        writeResCurId2Redirects();
     }
 
     private void mapUnresolvedToResolved(){
@@ -148,6 +178,15 @@ public class PageMapLineParser {
 
             if (!listPages.contains(resolvedId)) {
                 resCurIdsToTitles_nonList.put(resolvedId, resolvedPageTitle);
+            }
+
+            if (uidToRid.get(id) != id) {
+                Integer rid = uidToRid.get(id);
+                Integer redirect = id;
+                if (!resCurId2redirects.containsKey(rid)) {
+                    resCurId2redirects.put(rid, new ArrayList<Integer>());
+                }
+                resCurId2redirects.get(rid).add(redirect);
             }
         }
     }

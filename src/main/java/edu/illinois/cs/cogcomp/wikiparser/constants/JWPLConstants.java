@@ -23,6 +23,7 @@ public class JWPLConstants {
     public static final String resCurId2ResTitle = "resCurId2ResTitle.tsv"; // Map from page titles (first column) to resolved page titles (second column)
     public static final String resCurId2ResTitle_nonList = "resCurId2ResTitle_nonList.tsv"; // List of page ids which belong to list pages
     public static final String resListPageCurId2ResTitle = "resListPageCurId2ResTitle.tsv"; // List of page ids which belong to list pages
+    public static final String resCurId2Redirects = "resCurId2Redirects.tsv"; // List of page ids which belong to list pages
 
 
     
