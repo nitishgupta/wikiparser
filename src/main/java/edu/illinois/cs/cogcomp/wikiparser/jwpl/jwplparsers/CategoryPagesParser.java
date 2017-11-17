@@ -177,6 +177,7 @@ public class CategoryPagesParser {
 
             nondisambPageResCurIds_noList = new HashSet<Integer>(PageMapLineParser.resCurIdsToTitles.keySet());
             nondisambPageResCurIds_noList.removeAll(disambPageResCurIds);
+            nondisambPageResCurIds_noList.removeAll(PageMapLineParser.listPages);
 
             writeToFiles();  // Writes outputs to files
             logger.log.info("Parsing of CategoryPages.txt done");

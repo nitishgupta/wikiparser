@@ -66,7 +66,7 @@ public class PageIdTitleParser implements Runnable{
             String title = lines[0].split("title=\"")[1];
             String wikiTitle = title.substring(0,title.length()-2); // Removes extra characters
             wikiTitle = wikiTitle.replaceAll(" ", "_");
-            if (wikiTitle.startsWith("List of") || wikiTitle.startsWith("Lists of")) return;       
+            if (wikiTitle.startsWith("List_of") || wikiTitle.startsWith("Lists_of")) return;
             
             // Gets curID
             String firstLine = lines[0].split("curid=")[1];

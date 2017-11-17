@@ -18,10 +18,10 @@ import edu.illinois.cs.cogcomp.wikiparser.utils.ParserLogger;
  *  will be written to files stored in a folder called page_map_line_output.
  */
 public class PageMapLineParser {
-    private String outputDir;
-    private static Set<Integer> curIds; // Stores all CurIds, both resolved and unresolved
+    public String outputDir;
+    public static Set<Integer> curIds; // Stores all CurIds, both resolved and unresolved
     public static Set<Integer> resolvedCurIds;  // Stores resolved Cur Ids
-    private static Set<Integer> listPages;  // Stores Cur Ids which are list pages
+    public static Set<Integer> listPages;  // Stores Cur Ids which are list pages
     public static Map<Integer, Integer> uidToRid; // Maps unresolved Cur Ids to resolved Cur Ids
     public static Map<Integer, String> curidsToTitles;  // Map from all Cur Ids to page titles
     public static Map<Integer, String> resCurIdsToTitles;  // Map from all Cur Ids to page titles
@@ -49,60 +49,6 @@ public class PageMapLineParser {
         resCurIdsToTitles = new HashMap();  // Map from all Cur Ids to page titles
         resCurIdsToTitles_nonList = new HashMap();  // Map from all Cur Ids to page titles
     }
-    
-//    private void writeCurIds() {
-//        // Write list of all page ids
-//        Path filePath = Paths.get(outputDir, JWPLConstants.pageIds);
-//        File file = new File(filePath.toString());
-//        try{
-//            FileWriter fw = new FileWriter(file.getAbsoluteFile());
-//            BufferedWriter bw = new BufferedWriter(fw);
-//            for(Integer id : curIds){
-//                bw.write(id.toString() + "\n");  // Each id exists on new line
-//            }
-//            bw.close();
-//        }
-//        catch (IOException e){
-//            e.printStackTrace();
-//            System.exit(-1);
-//        }
-//    }
-    
-//    private void writeResCurIds(){
-//        // Writes list of resolved page ids
-//        Path filePath = Paths.get(outputDir, JWPLConstants.resPageIds);
-//        File file = new File(filePath.toString());
-//        try{
-//            FileWriter fw = new FileWriter(file.getAbsoluteFile());
-//            BufferedWriter bw = new BufferedWriter(fw);
-//            for(Integer id : resolvedCurIds){
-//                bw.write(id.toString() + "\n");  // Each id exists on a new line
-//            }
-//            bw.close();
-//        }
-//        catch (IOException e){
-//            e.printStackTrace();
-//            System.exit(-1);
-//        }
-//    }
-    
-//    private void writePageIdsToTitles(){
-//        // Writes map from page ids to page titles
-//        Path filePath = Paths.get(outputDir, JWPLConstants.pageIdsToTitles);
-//        File file = new File(filePath.toString());
-//                try{
-//            FileWriter fw = new FileWriter(file.getAbsoluteFile());
-//            BufferedWriter bw = new BufferedWriter(fw);
-//            for(Integer id : curidsToTitles.keySet()){
-//                bw.write(id.toString() + "\t" + curidsToTitles.get(id) + "\n"); // Each page exists on a new line
-//            }
-//            bw.close();
-//        }
-//        catch (IOException e){
-//            e.printStackTrace();
-//            System.exit(-1);
-//        }
-//    }
 
     private void writeCurId2Title(){
         // Writes map from page ids to page titles
@@ -163,25 +109,7 @@ public class PageMapLineParser {
             System.exit(-1);
         }
     }
-    
-//    private void writePageTitlesToResTitles(){
-//        // Writes map from unresolved page titles (first column) to resolved page titles (second column)
-//        Path filePath = Paths.get(outputDir, JWPLConstants.unresTitlesToResTitles);
-//        File file = new File(filePath.toString());
-//        try{
-//            FileWriter fw = new FileWriter(file.getAbsoluteFile());
-//            BufferedWriter bw = new BufferedWriter(fw);
-//            for(String title : uptToRpt.keySet()){
-//                bw.write(title + "\t" + uptToRpt.get(title) + "\n");  // Each title exists on a new line
-//            }
-//            bw.close();
-//        }
-//        catch (IOException e){
-//            e.printStackTrace();
-//            System.exit(-1);
-//        }
-//    }
-    
+
     private void writeListPageIdsTitle(){
         // Writes list of ids which belong to list pages
         logger.log.info("Writes list of ids which belong to list pages");
@@ -204,10 +132,6 @@ public class PageMapLineParser {
     }
 
     private void writeToFiles(){
-//        writeCurIds();
-//        writeResCurIds();
-//        writePageIdsToTitles();
-//        writePageTitlesToResTitles();
         writeCurId2Title();
         writeResCurId2ResTitle();
         writeResCurId2ResTitle_nonList();
