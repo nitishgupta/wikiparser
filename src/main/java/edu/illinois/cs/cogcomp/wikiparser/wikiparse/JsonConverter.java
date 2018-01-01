@@ -38,7 +38,7 @@ public class JsonConverter {
                 if(idx % limit == 0){
                     fileNumber++;
                     //System.out.println(filePath.toString() + String.valueOf(fileNumber));
-                    fileOut = new FileOutputStream(filePath.toString() + String.valueOf(fileNumber));
+                    fileOut = new FileOutputStream(filePath.toString() + String.valueOf(fileNumber)+".txt");
                     out = new ObjectOutputStream(fileOut);
                 }
                 WikiPage obj = objects.get(idx);
