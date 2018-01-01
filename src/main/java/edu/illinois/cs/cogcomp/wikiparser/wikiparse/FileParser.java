@@ -10,6 +10,7 @@ import java.util.regex.Pattern;
 import edu.illinois.cs.cogcomp.wikiparser.utils.FileUtils;
 import edu.illinois.cs.cogcomp.wikiparser.utils.Pair;
 import edu.illinois.cs.cogcomp.wikiparser.utils.ParserLogger;
+import edu.illinois.cs.cogcomp.wikiparser.wikiparse.JsonConverter;
 
 /**
  *
@@ -64,6 +65,7 @@ public class FileParser implements Runnable {
     }
     
     private static Logger logger;
+    public static List<WikiPage> WikiPageObjects = new ArrayList();
     public String infile;
     public String outfile;
     
@@ -237,7 +239,10 @@ public class FileParser implements Runnable {
         for(int i = 0; i < docs.length; i++){
             String doc = docs[i];
             WikiPage wp = parseDoc(doc);  
-            if(wp != null) data.add(wp);  // This can be null when the datafield object created from a single document is null
+            if(wp != null) { // This can be null when the datafield object created from a single document is null
+                data.add(wp);
+                WikiPageObjects.add(wp);
+            }  
         }
         
         return data;
@@ -246,7 +251,9 @@ public class FileParser implements Runnable {
     public void run(){
         try{
             List<WikiPage> res = parseFile(this.infile);
-            Serialize.serialize(res, this.outfile);
+            //Serialize.serialize(res, this.outfile);
+            //JsonConverter converter = new JsonConverter(outfile);
+            //converter.ConvertToJson(res, outfile);
         }catch(Exception e){
             logger.severe("Wiki Parsing failed : \nInFile : " + infile + " \nOutfile : " + outfile);
             logger.severe("Exception: " + e.toString());
