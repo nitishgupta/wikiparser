@@ -72,7 +72,8 @@ public class WikiExtractParser {
         WikiExtractParser wikiparser = new WikiExtractParser();
         wikiparser.wikiDirectory = args[0];
         wikiparser.outputDir = args[1];
+        JsonConverter.setOutputDir(wikiparser.outputDir);
         wikiparser.extractWiki();
-        JsonConverter.ConvertToJson(FileParser.WikiPageObjects, wikiparser.outputDir);
+        JsonConverter.closeFiles();
     }
 }

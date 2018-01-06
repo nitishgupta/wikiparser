@@ -13,8 +13,6 @@ import edu.illinois.cs.cogcomp.wikiparser.utils.ParserLogger;
 import edu.illinois.cs.cogcomp.wikiparser.wikiparse.JsonConverter;
 
 /**
- *
- * @author Reuben-PC
  * 
  * This class implements functions to parse a single wiki text file into the required 
  * fields and create a list of WikiPage objects depending on the number of articles 
@@ -65,7 +63,6 @@ public class FileParser implements Runnable {
     }
     
     private static Logger logger;
-    public static List<WikiPage> WikiPageObjects = new ArrayList();
     public String infile;
     public String outfile;
     
@@ -241,7 +238,6 @@ public class FileParser implements Runnable {
             WikiPage wp = parseDoc(doc);  
             if(wp != null) { // This can be null when the datafield object created from a single document is null
                 data.add(wp);
-                WikiPageObjects.add(wp);
             }  
         }
         
@@ -251,9 +247,7 @@ public class FileParser implements Runnable {
     public void run(){
         try{
             List<WikiPage> res = parseFile(this.infile);
-            //Serialize.serialize(res, this.outfile);
-            //JsonConverter converter = new JsonConverter(outfile);
-            //converter.ConvertToJson(res, outfile);
+            JsonConverter.ConvertToJson(res);
         }catch(Exception e){
             logger.severe("Wiki Parsing failed : \nInFile : " + infile + " \nOutfile : " + outfile);
             logger.severe("Exception: " + e.toString());

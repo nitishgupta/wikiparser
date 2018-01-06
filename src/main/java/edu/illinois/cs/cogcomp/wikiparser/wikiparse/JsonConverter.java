@@ -3,11 +3,10 @@ package edu.illinois.cs.cogcomp.wikiparser.wikiparse;
 import edu.illinois.cs.cogcomp.wikiparser.ds.WikiPage;
 import java.util.*;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.ObjectOutputStream;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.io.FileWriter;
 
 /**
  * This class converts the WikiPage objects into JSON format.  With an 
@@ -15,40 +14,46 @@ import java.nio.file.Paths;
  */
 public class JsonConverter {
     private static final int limit = 10000;
-    private static final String fileName = "WikiPages";
-    private String outputDir;
-    private String filePath, file;
-    private static boolean fileOpened = false;
+    private static final String filePath = "WikiPages";
+    private static String outputDir = null;
+    private static String fileName = null;
+    private static String currentFileName = null;
+    private static int count = 0;
+    private static int fileNumber = 0;
+    private static FileWriter fileOut = null;
     
-    public JsonConverter(String outputDir){
-        this.outputDir = outputDir;
-        filePath = Paths.get(outputDir, fileName).toString();
-        System.out.println((filePath));
+    public static void setOutputDir(String directory){
+        outputDir = directory;
+        Path file = Paths.get(outputDir, filePath);
+        fileName = file.toString();
     }
     
-    public static void ConvertToJson(List<WikiPage> objects, String outputDir){
+    public static synchronized void ConvertToJson(List<WikiPage> objects){
         ObjectMapper mapper = new ObjectMapper();
         String json;
-        Path filePath = Paths.get(outputDir, fileName);
         try{
-            int fileNumber = 0;
-            FileOutputStream fileOut = null;
-            ObjectOutputStream out = null;
             for(int idx = 0; idx < objects.size(); idx++){
-                if(idx % limit == 0){
+                if(count % limit == 0 || currentFileName == null){
                     fileNumber++;
-                    //System.out.println(filePath.toString() + String.valueOf(fileNumber));
-                    fileOut = new FileOutputStream(filePath.toString() + String.valueOf(fileNumber)+".txt");
-                    out = new ObjectOutputStream(fileOut);
+                    currentFileName = fileName + String.valueOf(fileNumber) + ".txt";
+                    System.out.println("Writing to " + currentFileName);
+                    if(fileOut != null) fileOut.close(); // Closes current file stream
+                    fileOut = new FileWriter(currentFileName);
                 }
                 WikiPage obj = objects.get(idx);
                 json = mapper.writeValueAsString(obj);
-                if(out != null) out.writeObject(json);
-                //System.out.println(json);
+                fileOut.write(json + "\n"); // Writes each object to a new line
+                count++;
             }
-            fileOut.close();
-            out.close();
         } catch (IOException e){
+            e.printStackTrace();
+        }
+    }
+    
+    public static synchronized void closeFiles(){
+        try{
+            if(fileOut != null) fileOut.close(); // Closes last file
+        } catch(IOException e){
             e.printStackTrace();
         }
     }
