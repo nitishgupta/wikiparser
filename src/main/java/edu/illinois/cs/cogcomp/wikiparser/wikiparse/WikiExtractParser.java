@@ -13,7 +13,7 @@ import edu.illinois.cs.cogcomp.wikiparser.utils.ParserLogger;
 import edu.illinois.cs.cogcomp.wikiparser.wikiparse.JsonConverter;
 
 /**
- * This class receives as input the output of the python parser which is a folder of folder 
+ * This class receives as input the output of the python parser which is a folder of folder
  * of wiki text files.  It reads each text file in the directory and parses them into
  * serialized lists of WikiPage objects
  */
@@ -24,11 +24,11 @@ public class WikiExtractParser {
     public String outputDir;
     private FileHandler fh;
     private ThreadPoolExecutor parser = null;
-    
+
     public WikiExtractParser() {
         parser = getBoundedThreadPool();
     }
-    
+
     public static ThreadPoolExecutor getBoundedThreadPool() {
         /*
             Manages a fixed number of WikiParser threads
@@ -45,7 +45,7 @@ public class WikiExtractParser {
         executor.allowCoreThreadTimeOut(true);
         return executor;
     }
-    
+
     public void extractWiki(){
         // Dir path to parsed Wikipedia. This dir contains multiple nested dirs with multiple files.
         File inDir = new File(wikiDirectory);
@@ -66,14 +66,12 @@ public class WikiExtractParser {
         }
         logger.log.info("Total Files: " + Integer.toString(totalFiles));
         System.out.println("[#] Total Files: " + totalFiles);
-        JsonConverter.closeFiles();
     }
-    
+
     public static void main(String [] args){
         WikiExtractParser wikiparser = new WikiExtractParser();
         wikiparser.wikiDirectory = args[0];
         wikiparser.outputDir = args[1];
         wikiparser.extractWiki();
-        
     }
 }
