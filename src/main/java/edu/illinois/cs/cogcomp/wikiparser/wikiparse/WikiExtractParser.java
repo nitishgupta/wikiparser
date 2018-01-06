@@ -51,7 +51,7 @@ public class WikiExtractParser {
         File inDir = new File(wikiDirectory);
         // This dir will replicate the dir/file structure in 'inDir'.
 	Iterator<File> i = org.apache.commons.io.FileUtils.iterateFiles(inDir, null, true);
-        
+        JsonConverter.setOutputDir(this.outputDir);
         int totalFiles = 0;
         logger.log.info("Starting to Parse Wiki Texts");
         // Reads all of the files in the given directory
@@ -66,14 +66,14 @@ public class WikiExtractParser {
         }
         logger.log.info("Total Files: " + Integer.toString(totalFiles));
         System.out.println("[#] Total Files: " + totalFiles);
+        JsonConverter.closeFiles();
     }
     
     public static void main(String [] args){
         WikiExtractParser wikiparser = new WikiExtractParser();
         wikiparser.wikiDirectory = args[0];
         wikiparser.outputDir = args[1];
-        JsonConverter.setOutputDir(wikiparser.outputDir);
         wikiparser.extractWiki();
-        JsonConverter.closeFiles();
+        
     }
 }
