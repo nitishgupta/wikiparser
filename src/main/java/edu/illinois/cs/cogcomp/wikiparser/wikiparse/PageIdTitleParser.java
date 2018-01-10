@@ -77,6 +77,8 @@ public class PageIdTitleParser implements Runnable{
                 logger.severe("Exception: " + e.toString());
             }
             wikiTitle = wikiTitle.replaceAll(" ", "_");
+            wikiTitle = wikiTitle.replaceAll("&amp;", "&"); // Replaces entity name for the character '&'
+            wikiTitle = wikiTitle.replaceAll("&quot;", "\""); // Replaces entity name for the character '"'
             if (wikiTitle.startsWith("List_of") || wikiTitle.startsWith("Lists_of")) return;
             
             // Gets curID

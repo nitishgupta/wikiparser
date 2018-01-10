@@ -205,7 +205,7 @@ public class PageMapLineParser {
                 pageTitle = pageTitle.replace("\\", "");  // Removes escape character '\'
                 pageTitle = pageTitle.trim(); // Removes trailing and leading space
                 if(pageTitle.isEmpty()) continue;
-                if (pageTitle.startsWith("List_of") || pageTitle.startsWith("Lists_of")){
+                if (pageTitle.startsWith("List_of") || pageTitle.startsWith("Lists_of") && (id == resolvedId)){
                     listPages.add(resolvedId);  // Only add resolved pages
                 }
                 curIds.add(id);  // Adds unresolved Cur Ids
