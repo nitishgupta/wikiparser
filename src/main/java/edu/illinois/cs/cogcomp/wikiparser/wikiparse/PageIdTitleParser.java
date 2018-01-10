@@ -15,6 +15,7 @@ import edu.illinois.cs.cogcomp.wikiparser.utils.ParserLogger;
 import static edu.illinois.cs.cogcomp.wikiparser.wikiparse.WikiExtractParser.getBoundedThreadPool;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
+import java.io.UnsupportedEncodingException;
 import java.nio.file.Paths;
 import java.nio.file.Path;
 
@@ -49,6 +50,10 @@ public class PageIdTitleParser implements Runnable{
         return executor;
     }
     
+    private static String decodeTitle(String title) throws UnsupportedEncodingException {
+        return java.net.URLDecoder.decode(title, "UTF-8");
+    } 
+    
     public void ParseDoc(String doc){
         /*
          * This function parses the document and and gets the page Id and page Title
@@ -65,6 +70,12 @@ public class PageIdTitleParser implements Runnable{
             // Gets Wikititle
             String title = lines[0].split("title=\"")[1];
             String wikiTitle = title.substring(0,title.length()-2); // Removes extra characters
+            try{
+                wikiTitle = decodeTitle(wikiTitle);
+            } catch(Exception e){
+                logger.severe("Input : " + wikiTitle);
+                logger.severe("Exception: " + e.toString());
+            }
             wikiTitle = wikiTitle.replaceAll(" ", "_");
             if (wikiTitle.startsWith("List_of") || wikiTitle.startsWith("Lists_of")) return;
             
