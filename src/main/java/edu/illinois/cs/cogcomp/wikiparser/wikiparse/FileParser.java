@@ -73,7 +73,7 @@ public class FileParser implements Runnable {
     }
     
     private static String decodeURL(String url) throws UnsupportedEncodingException {
-        url = java.net.URLEncoder.encode(url , "UTF-8"); // This is done in order to get rid of improper encoding after being parsed by wikiextractor.py
+        //url = java.net.URLEncoder.encode(url , "UTF-8"); // This is done in order to get rid of improper encoding after being parsed by wikiextractor.py
         return java.net.URLDecoder.decode(url, "UTF-8");
     }
     
@@ -121,7 +121,7 @@ public class FileParser implements Runnable {
         return docText;
     }
     
-    private Pair<StringBuilder, Map<Pair<Integer, Integer>, String>> cleanDocText(String markedupText) {
+    private Pair<StringBuilder, Map<List<Integer>, String>> cleanDocText(String markedupText) {
         /**
         * Takes text marked with <a href="url">surface</a> and returns
         * Returns:
@@ -133,10 +133,10 @@ public class FileParser implements Runnable {
         *                 the paragraphs are kept as they are and are separated by an empty line.  
         */
         StringBuilder cleanText = new StringBuilder();
-	Map<Pair<Integer, Integer>, String> offsets2Title = new HashMap();
+	Map<List<Integer>, String> offsets2Title = new HashMap();
         Pattern linkPattern = Pattern.compile("(<a[^>]+>.+?</a>)",  Pattern.CASE_INSENSITIVE|Pattern.DOTALL);
         if(markedupText == null){  // if text is null, do not attempt to find patterns.  It will lead to a null pointer exception
-            return new Pair<StringBuilder,Map<Pair<Integer, Integer>, String>>(cleanText, offsets2Title);
+            return new Pair<StringBuilder,Map<List<Integer>, String>>(cleanText, offsets2Title);
         }
 	Matcher matcher = linkPattern.matcher(markedupText);
         int len = markedupText.length();
@@ -148,15 +148,17 @@ public class FileParser implements Runnable {
             String[] urlSurface = _cleanHyperLink(matcher.group());
             if(urlSurface == null || urlSurface.length < 2) continue;
             if (urlSurface[0] != null) {
-                offsets2Title.put(new Pair<Integer, Integer>(cleanText.length(), cleanText.length()+urlSurface[1].length()),
-                                  urlSurface[0]);
+                List<Integer> offsets = new ArrayList();
+                offsets.add(cleanText.length());
+                offsets.add(cleanText.length()+urlSurface[1].length());
+                offsets2Title.put(offsets, urlSurface[0]);
             }
             cleanText.append(urlSurface[1]);
             oldStart = matcher.end();   
         }
         
         if (oldStart < len) cleanText.append(markedupText.substring(oldStart, len));
-        return new Pair<StringBuilder,Map<Pair<Integer, Integer>, String>>(cleanText, offsets2Title);
+        return new Pair<StringBuilder,Map<List<Integer>, String>>(cleanText, offsets2Title);
     }
     
     public DataFields getFields(String doc){
@@ -184,6 +186,8 @@ public class FileParser implements Runnable {
         // Gets page title
         String pageTitle = lines[1];
         pageTitle = pageTitle.replaceAll(" ", "_");
+        pageTitle = pageTitle.replaceAll("&amp;", "&"); // Replaces entity name for the character '&'
+        pageTitle = pageTitle.replaceAll("&quot;", "\""); // Replaces entity name for the character '"'
             
         // Gets text
         String text = getDocText(lines);
@@ -200,10 +204,10 @@ public class FileParser implements Runnable {
             if(dataObj == null) return null;  // Returns null if the wikipage is to be excluded.  This includes List pages.
                 
             // Gets Text and internal hyperlinks
-            Pair<StringBuilder, Map<Pair<Integer, Integer>, String>> cleanText2Offset = cleanDocText(dataObj.getText());
+            Pair<StringBuilder, Map<List<Integer>, String>> cleanText2Offset = cleanDocText(dataObj.getText());
             String doctext = cleanText2Offset.getFirst().toString();
                  
-            Map<Pair<Integer, Integer>, String> hyperlinks = cleanText2Offset.getSecond();
+            Map<List<Integer>, String> hyperlinks = cleanText2Offset.getSecond();
             WikiPage wp = new WikiPage();
             wp.setWikiPageFields(dataObj.getWikiTitle(), dataObj.getPageTitle(), dataObj.getId(), doctext, hyperlinks);
             return wp;

@@ -35,7 +35,7 @@ public class JsonConverter {
             for(int idx = 0; idx < objects.size(); idx++){
                 if(count % limit == 0 || currentFileName == null){
                     fileNumber++;
-                    currentFileName = fileName + String.valueOf(fileNumber) + ".txt";
+                    currentFileName = fileName + String.valueOf(fileNumber) + ".json";
                     System.out.println("Writing to " + currentFileName);
                     if(fileOut != null) fileOut.close(); // Closes current file stream
                     fileOut = new FileWriter(currentFileName);
