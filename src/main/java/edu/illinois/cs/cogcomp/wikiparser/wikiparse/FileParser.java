@@ -77,6 +77,13 @@ public class FileParser implements Runnable {
         return java.net.URLDecoder.decode(url, "UTF-8");
     }
     
+    private static String removeSpecialCharacters(String text){
+        text = text.replaceAll(" ", "_");
+        text = text.replaceAll("&amp;", "&"); // Replaces entity name for the character '&'
+        text = text.replaceAll("&quot;", "\""); // Replaces entity name for the character '"'
+        return text;
+    }
+    
     private String[] _cleanHyperLink(String string) {
         /**
         * Input : <a href="Grand%20Slam%20%28tennis%29">Grand Slam</a>
@@ -174,7 +181,7 @@ public class FileParser implements Runnable {
         // Gets Wikititle
         String title = lines[0].split("title=\"")[1];
         String wikiTitle = title.substring(0,title.length()-2); // Removes extra characters
-        wikiTitle = wikiTitle.replaceAll(" ", "_");
+        wikiTitle = removeSpecialCharacters(wikiTitle);
         if (wikiTitle.startsWith("List_of") || wikiTitle.startsWith("Lists_of")) return null;
             
         // Gets curID
@@ -185,9 +192,7 @@ public class FileParser implements Runnable {
                 
         // Gets page title
         String pageTitle = lines[1];
-        pageTitle = pageTitle.replaceAll(" ", "_");
-        pageTitle = pageTitle.replaceAll("&amp;", "&"); // Replaces entity name for the character '&'
-        pageTitle = pageTitle.replaceAll("&quot;", "\""); // Replaces entity name for the character '"'
+        pageTitle = removeSpecialCharacters(pageTitle);
             
         // Gets text
         String text = getDocText(lines);
