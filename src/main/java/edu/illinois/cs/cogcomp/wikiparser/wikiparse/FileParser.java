@@ -11,6 +11,7 @@ import edu.illinois.cs.cogcomp.wikiparser.utils.FileUtils;
 import edu.illinois.cs.cogcomp.wikiparser.utils.Pair;
 import edu.illinois.cs.cogcomp.wikiparser.utils.ParserLogger;
 import edu.illinois.cs.cogcomp.wikiparser.wikiparse.JsonConverter;
+import org.apache.commons.lang.StringEscapeUtils;
 
 /**
  * 
@@ -73,14 +74,15 @@ public class FileParser implements Runnable {
     }
     
     private static String decodeURL(String url) throws UnsupportedEncodingException {
-        //url = java.net.URLEncoder.encode(url , "UTF-8"); // This is done in order to get rid of improper encoding after being parsed by wikiextractor.py
         return java.net.URLDecoder.decode(url, "UTF-8");
     }
     
     private static String removeSpecialCharacters(String text){
         text = text.replaceAll(" ", "_");
-        text = text.replaceAll("&amp;", "&"); // Replaces entity name for the character '&'
-        text = text.replaceAll("&quot;", "\""); // Replaces entity name for the character '"'
+        text = StringEscapeUtils.unescapeHtml(text);
+        //text = text.replaceAll("&amp;", "&"); // Replaces entity name for the character '&'
+        //text = text.replaceAll("&quot;", "\""); // Replaces entity name for the character '"'
+        
         return text;
     }
     
@@ -95,6 +97,7 @@ public class FileParser implements Runnable {
        else if(!string.substring(0,7).contains("<a href")) return null;
        int len = string.length();
        String urlCharCharSurface = string.substring(9, len - 4);  // Returns : url">surface
+       urlCharCharSurface = removeSpecialCharacters(urlCharCharSurface);
        String[] urlSurface = urlCharCharSurface.split("\">");
        assert (urlSurface.length == 2);
        String decodedUrl = new String();
