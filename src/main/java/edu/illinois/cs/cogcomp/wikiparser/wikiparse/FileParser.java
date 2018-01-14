@@ -11,19 +11,18 @@ import edu.illinois.cs.cogcomp.wikiparser.utils.FileUtils;
 import edu.illinois.cs.cogcomp.wikiparser.utils.Pair;
 import edu.illinois.cs.cogcomp.wikiparser.utils.ParserLogger;
 import edu.illinois.cs.cogcomp.wikiparser.wikiparse.JsonConverter;
-import org.apache.commons.lang.StringEscapeUtils;
 
 /**
- * 
- * This class implements functions to parse a single wiki text file into the required 
- * fields and create a list of WikiPage objects depending on the number of articles 
+ *
+ * This class implements functions to parse a single wiki text file into the required
+ * fields and create a list of WikiPage objects depending on the number of articles
  * in the text file
  */
 public class FileParser implements Runnable {
-    
+
     /*
-        This class is used to temporarily store data from the the parsing of 
-        a single document.  The text variable will then be additionally 
+        This class is used to temporarily store data from the the parsing of
+        a single document.  The text variable will then be additionally
         processed further to get the document text and hyperlinks.
     */
     public class DataFields {
@@ -62,30 +61,31 @@ public class FileParser implements Runnable {
             return this.text;
         }
     }
-    
+
     private static Logger logger;
     public String infile;
     public String outfile;
-    
+
     public FileParser(String infile, String outfile, Logger logger){
         this.logger = logger;
         this.infile = infile;
         this.outfile = outfile;
     }
-    
+
     private static String decodeURL(String url) throws UnsupportedEncodingException {
         return java.net.URLDecoder.decode(url, "UTF-8");
     }
-    
+
     private static String removeSpecialCharacters(String text){
         text = text.replaceAll(" ", "_");
-        text = StringEscapeUtils.unescapeHtml(text);
-        //text = text.replaceAll("&amp;", "&"); // Replaces entity name for the character '&'
-        //text = text.replaceAll("&quot;", "\""); // Replaces entity name for the character '"'
-        
+        while(text.contains("&amp;") || text.contains("&nbsp;") || text.contains("&quot;")){
+          text = text.replaceAll("&amp;", "&"); // Replaces entity name for the character '&'
+          text = text.replaceAll("&nbsp;", "-");  // Replaces entity name for the character '-'
+          text = text.replaceAll("&quot;", "\""); // Replaces entity name for the character '"'
+        }
         return text;
     }
-    
+
     private String[] _cleanHyperLink(String string) {
         /**
         * Input : <a href="Grand%20Slam%20%28tennis%29">Grand Slam</a>
@@ -97,22 +97,25 @@ public class FileParser implements Runnable {
        else if(!string.substring(0,7).contains("<a href")) return null;
        int len = string.length();
        String urlCharCharSurface = string.substring(9, len - 4);  // Returns : url">surface
-       urlCharCharSurface = removeSpecialCharacters(urlCharCharSurface);
+       //urlCharCharSurface = removeSpecialCharacters(urlCharCharSurface);
        String[] urlSurface = urlCharCharSurface.split("\">");
        assert (urlSurface.length == 2);
-       String decodedUrl = new String();
+       String decodedUrl = "";
        try {
                decodedUrl = decodeURL(urlSurface[0]);
+               decodedUrl = removeSpecialCharacters(decodedUrl);
+               urlSurface[0] = null;
+               urlSurface[0] = decodedUrl;
        } catch (Exception e) {
                logger.severe("File : " + infile);
                logger.severe("Input : " + urlCharCharSurface);
                logger.severe("Exception: " + e.toString());
                logger.severe("URL Parsing failed : " + urlSurface[0]);
        }
-       urlSurface[0] = decodedUrl;
+
        return urlSurface;
     }
-    
+
     private String getDocText(String [] lines){
         /**
          * Helper function to convert all of the lines
@@ -126,21 +129,21 @@ public class FileParser implements Runnable {
                 doc.append("\n");
             }
         }
-        
+
         String docText = doc.toString().trim();
         return docText;
     }
-    
+
     private Pair<StringBuilder, Map<List<Integer>, String>> cleanDocText(String markedupText) {
         /**
         * Takes text marked with <a href="url">surface</a> and returns
         * Returns:
         * 	StringBuilder : cleanText with no markups.
         * 	Map<<start, end>, Title> : Start (inc) end(exc) char offsets for surface and their resp. marked titles
-        * 
+        *
         * Important Note: Text files in the wikipedia dump do not indicate between sections.
         *                 The text field is stored as in the same format as the parsed text where
-        *                 the paragraphs are kept as they are and are separated by an empty line.  
+        *                 the paragraphs are kept as they are and are separated by an empty line.
         */
         StringBuilder cleanText = new StringBuilder();
 	Map<List<Integer>, String> offsets2Title = new HashMap();
@@ -164,13 +167,13 @@ public class FileParser implements Runnable {
                 offsets2Title.put(offsets, urlSurface[0]);
             }
             cleanText.append(urlSurface[1]);
-            oldStart = matcher.end();   
+            oldStart = matcher.end();
         }
-        
+
         if (oldStart < len) cleanText.append(markedupText.substring(oldStart, len));
         return new Pair<StringBuilder,Map<List<Integer>, String>>(cleanText, offsets2Title);
     }
-    
+
     public DataFields getFields(String doc){
         /*
             Helper function to get required data from
@@ -180,41 +183,41 @@ public class FileParser implements Runnable {
         String [] lines = doc.trim().split("\n");
         if(lines.length == 0) return null;
         assert (lines[0].startsWith("<doc id=")); // Line 1 should be <doc ... >
-                
+
         // Gets Wikititle
         String title = lines[0].split("title=\"")[1];
         String wikiTitle = title.substring(0,title.length()-2); // Removes extra characters
         wikiTitle = removeSpecialCharacters(wikiTitle);
         if (wikiTitle.startsWith("List_of") || wikiTitle.startsWith("Lists_of")) return null;
-            
+
         // Gets curID
         String firstLine = lines[0].split("curid=")[1];
         int index = firstLine.indexOf("\"");
         String id = firstLine.substring(0, index);
         int curId = Integer.parseInt(id);
-                
+
         // Gets page title
         String pageTitle = lines[1];
         pageTitle = removeSpecialCharacters(pageTitle);
-            
+
         // Gets text
         String text = getDocText(lines);
         return new DataFields(wikiTitle, pageTitle, curId, text);
     }
-    
+
     public WikiPage parseDoc(String doc){
         /*
-            Helper function to create a WikiPage 
+            Helper function to create a WikiPage
             object from a single document
         */
         if (!doc.trim().isEmpty()){
             DataFields dataObj = getFields(doc);
             if(dataObj == null) return null;  // Returns null if the wikipage is to be excluded.  This includes List pages.
-                
+
             // Gets Text and internal hyperlinks
             Pair<StringBuilder, Map<List<Integer>, String>> cleanText2Offset = cleanDocText(dataObj.getText());
             String doctext = cleanText2Offset.getFirst().toString();
-                 
+
             Map<List<Integer>, String> hyperlinks = cleanText2Offset.getSecond();
             WikiPage wp = new WikiPage();
             wp.setWikiPageFields(dataObj.getWikiTitle(), dataObj.getPageTitle(), dataObj.getId(), doctext, hyperlinks);
@@ -222,7 +225,7 @@ public class FileParser implements Runnable {
         }
         else return null;
     }
-    
+
     public static String[] breakDocs(String filename){
         /**
          * Takes the name of the file to parse as input
@@ -231,11 +234,11 @@ public class FileParser implements Runnable {
         String text = null;
         text = FileUtils.readFileToString(filename);
         if(text == null) return null;
-        
+
         String [] docs = text.split("</doc>");
         return docs;
     }
-    
+
     public List<WikiPage> parseFile(String filename){
         /*
             This breaks an entire file into multiple docs and parses
@@ -247,15 +250,15 @@ public class FileParser implements Runnable {
         if(docs == null) return data;
         for(int i = 0; i < docs.length; i++){
             String doc = docs[i];
-            WikiPage wp = parseDoc(doc);  
+            WikiPage wp = parseDoc(doc);
             if(wp != null) { // This can be null when the datafield object created from a single document is null
                 data.add(wp);
-            }  
+            }
         }
-        
+
         return data;
     }
-    
+
     public void run(){
         try{
             List<WikiPage> res = parseFile(this.infile);
@@ -264,6 +267,6 @@ public class FileParser implements Runnable {
             logger.severe("Wiki Parsing failed : \nInFile : " + infile + " \nOutfile : " + outfile);
             logger.severe("Exception: " + e.toString());
         }
-    }   
-    
+    }
+
 }
