@@ -73,15 +73,18 @@ public class FileParser implements Runnable {
     }
 
     private static String decodeURL(String url) throws UnsupportedEncodingException {
+        if(url.contains("%s") || url.contains("90% ")) return url;
         return java.net.URLDecoder.decode(url, "UTF-8");
     }
 
     private static String removeSpecialCharacters(String text){
         text = text.replaceAll(" ", "_");
-        while(text.contains("&amp;") || text.contains("&nbsp;") || text.contains("&quot;")){
+        while(text.contains("&amp;") || text.contains("&nbsp;") || text.contains("&quot;") || text.contains("&lt;") || text.contains("&gt;")){
           text = text.replaceAll("&amp;", "&"); // Replaces entity name for the character '&'
-          text = text.replaceAll("&nbsp;", "-");  // Replaces entity name for the character '-'
+          text = text.replaceAll("&nbsp;", "_");  // Replaces entity name for the character '-'
           text = text.replaceAll("&quot;", "\""); // Replaces entity name for the character '"'
+          text = text.replaceAll("&lt;", "<");
+          text = text.replaceAll("&gt;", ">");
         }
         return text;
     }
