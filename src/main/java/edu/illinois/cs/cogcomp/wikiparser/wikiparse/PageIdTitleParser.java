@@ -25,14 +25,14 @@ public class PageIdTitleParser implements Runnable{
     private String outputDir;
     private String inputDir;
     private Map<Integer, String> idToTitleMap;
-    
+
     public PageIdTitleParser(String inputDir, String outputDir, Logger logger){
         this.inputDir = inputDir;
         this.outputDir = outputDir;
         this.logger = logger;
         idToTitleMap = new HashMap();
     }
-    
+
     public static ThreadPoolExecutor getBoundedThreadPool() {
         /*
             Manages a fixed number of WikiParser threads
@@ -49,11 +49,23 @@ public class PageIdTitleParser implements Runnable{
         executor.allowCoreThreadTimeOut(true);
         return executor;
     }
-    
+
     private static String decodeTitle(String title) throws UnsupportedEncodingException {
         return java.net.URLDecoder.decode(title, "UTF-8");
-    } 
-    
+    }
+
+    private static String removeSpecialCharacters(String text){
+        text = text.replaceAll(" ", "_");
+        while(text.contains("&amp;") || text.contains("&nbsp;") || text.contains("&quot;") || text.contains("&lt;") || text.contains("&gt;")){
+          text = text.replaceAll("&amp;", "&"); // Replaces entity name for the character '&'
+          text = text.replaceAll("&nbsp;", "_");  // Replaces entity name for the character '-'
+          text = text.replaceAll("&quot;", "\""); // Replaces entity name for the character '"'
+          text = text.replaceAll("&lt;", "<");
+          text = text.replaceAll("&gt;", ">");
+        }
+        return text;
+    }
+
     public void ParseDoc(String doc){
         /*
          * This function parses the document and and gets the page Id and page Title
@@ -66,7 +78,7 @@ public class PageIdTitleParser implements Runnable{
                 return;
             }
             assert (lines[0].startsWith("<doc id=")); // Line 1 should be <doc ... >
-            
+
             // Gets Wikititle
             String title = lines[0].split("title=\"")[1];
             String wikiTitle = title.substring(0,title.length()-2); // Removes extra characters
@@ -78,24 +90,22 @@ public class PageIdTitleParser implements Runnable{
             }
             wikiTitle = wikiTitle.replaceAll(" ", "_");
             if (wikiTitle.startsWith("List_of") || wikiTitle.startsWith("Lists_of")) return;
-            
+
             // Gets curID
             String firstLine = lines[0].split("curid=")[1];
             int index = firstLine.indexOf("\"");
             String id = firstLine.substring(0, index);
             int curId = Integer.parseInt(id);
-            
+
             // Gets page title
             String pageTitle = lines[1];
-            pageTitle = pageTitle.replaceAll(" ", "_");
-            pageTitle = pageTitle.replaceAll("&amp;", "&"); // Replaces entity name for the character '&'
-            pageTitle = pageTitle.replaceAll("&quot;", "\""); // Replaces entity name for the character '"'
+            pageTitle = removeSpecialCharacters(pageTitle);
             if(!idToTitleMap.containsKey(curId)){
                 idToTitleMap.put(curId, pageTitle);
             }
         }
     }
-    
+
     public void writeToFiles(){
         // Writes id to title map to file
         Path filePath = Paths.get(outputDir, WikiparseConstants.PageIdTitleOutput);
@@ -105,7 +115,7 @@ public class PageIdTitleParser implements Runnable{
                 FileWriter fw = new FileWriter(file.getAbsoluteFile());
                 BufferedWriter bw = new BufferedWriter(fw);
                 for(Integer id : idToTitleMap.keySet()){
-                    String PageTitle = idToTitleMap.get(id);     
+                    String PageTitle = idToTitleMap.get(id);
                     bw.write(id.toString() + "\t" + PageTitle + "\n"); // Each page exists on a new line
                 }
                 bw.close();
@@ -116,13 +126,13 @@ public class PageIdTitleParser implements Runnable{
             System.exit(-1);
         }
     }
-    
+
     public void MapPageIdToTitle(){
         // Dir path to parsed Wikipedia. This dir contains multiple nested dirs with multiple files.
         File inDir = new File(inputDir);
         // This dir will replicate the dir/file structure in 'inDir'.
 	Iterator<File> i = org.apache.commons.io.FileUtils.iterateFiles(inDir, null, true);
-        
+
         int totalFiles = 0;
         logger.info("Starting to Parse Wiki Texts");
         // Reads all of the files in the given directory
@@ -142,11 +152,11 @@ public class PageIdTitleParser implements Runnable{
             }
         }
         logger.info("Total Files: " + Integer.toString(totalFiles));
-        
+
         // Writing to file
         writeToFiles();
     }
-    
+
     public void run(){
         logger.info(("Generating Map of Page Ids to Page Titles"));
         try{
@@ -155,7 +165,7 @@ public class PageIdTitleParser implements Runnable{
             logger.severe("Exception: " + e.toString());
         }
     }
-    
+
     public static void main(String [] args){
         ThreadPoolExecutor parser = getBoundedThreadPool();
         String inputDir = args[0], outputDir = args[1];
