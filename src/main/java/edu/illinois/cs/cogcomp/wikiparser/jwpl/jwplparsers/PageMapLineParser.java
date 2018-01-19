@@ -27,8 +27,8 @@ public class PageMapLineParser {
     public static Map<Integer, String> resCurIdsToTitles;  // Map from all Cur Ids to page titles
     public static Map<Integer, String> resCurIdsToTitles_nonList; // Map from all Cur Ids to page titles
     public static Map<Integer, List<Integer>> resCurId2redirects;
-    private ParserLogger logger; 
-    
+    private ParserLogger logger;
+
     public PageMapLineParser(String outputDir, ParserLogger logger){
         this.outputDir = outputDir;
         this.logger = logger;
@@ -205,8 +205,10 @@ public class PageMapLineParser {
                 pageTitle = pageTitle.replace("\\", "");  // Removes escape character '\'
                 pageTitle = pageTitle.trim(); // Removes trailing and leading space
                 if(pageTitle.isEmpty()) continue;
-                if (pageTitle.startsWith("List_of") || pageTitle.startsWith("Lists_of") && (id == resolvedId)){
+                if(id.equals(resolvedId)){
+                  if (pageTitle.startsWith("List_of") || pageTitle.startsWith("Lists_of")){
                     listPages.add(resolvedId);  // Only add resolved pages
+                  }
                 }
                 curIds.add(id);  // Adds unresolved Cur Ids
                 resolvedCurIds.add(resolvedId); // Adds resolved Cur Ids to set
