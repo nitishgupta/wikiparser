@@ -180,7 +180,7 @@ public class PageMapLineParser {
                 resCurIdsToTitles_nonList.put(resolvedId, resolvedPageTitle);
             }
 
-            if (uidToRid.get(id) != id) {
+            if (!uidToRid.get(id).equals(id)) {
                 Integer rid = uidToRid.get(id);
                 Integer redirect = id;
                 if (!resCurId2redirects.containsKey(rid)) {
