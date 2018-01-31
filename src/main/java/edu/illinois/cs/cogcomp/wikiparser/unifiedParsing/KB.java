@@ -10,11 +10,11 @@ public class KB {
     public static Map<String, String> curIds2TitleMap = null;
     public static Map<String, String> nonListMap = null;
     public static Map<String, String> RedirectTitle2ResolvedTitleMap = null;
-    
+
     public static void loadRedirectTitle2ResolvedTitleMap(String filename){
         // Parses resCurId2Redirects.tsv
         RedirectTitle2ResolvedTitleMap = new HashMap();
-        try{  
+        try{
             String line;
             BufferedReader reader = new BufferedReader(new FileReader(filename));
             while((line = reader.readLine()) != null){
@@ -37,11 +37,11 @@ public class KB {
             System.exit(-1);
         }
     }
-    
+
     public static void loadCurIdsMap(String filename){
         // Parses curIds2Title.tsv
         curIds2TitleMap = new HashMap();
-        try{  
+        try{
             String line;
             BufferedReader reader = new BufferedReader(new FileReader(filename));
             while((line = reader.readLine()) != null){
@@ -54,16 +54,16 @@ public class KB {
             System.exit(-1);
         }
     }
-    
+
     public static void loadNonListMap(String filename){
         // Parses resCurIdNonDisambig2ResTitle_nonList.tsv
         nonListMap = new HashMap();
-        try{  
+        try{
             String line;
             BufferedReader reader = new BufferedReader(new FileReader(filename));
             while((line = reader.readLine()) != null){
                 String [] row = line.split("\t");
-                curIds2TitleMap.put(row[0], row[1]);
+                nonListMap.put(row[0], row[1]);
             }
             reader.close();
         } catch (IOException e){
@@ -71,8 +71,13 @@ public class KB {
             System.exit(-1);
         }
     }
-    
+
     public static void main(String [] args){
-        
+      loadCurIdsMap(args[0]);
+      System.out.println("Size of curIds2TitleMap is " + curIds2TitleMap.size());
+      loadNonListMap(args[1]);
+      System.out.println("Size of nonListMap is " + nonListMap.size());
+      loadRedirectTitle2ResolvedTitleMap(args[2]);
+      System.out.println("Size of RedirectTitle2ResolvedTitleMap is " + RedirectTitle2ResolvedTitleMap.size());
     }
 }
