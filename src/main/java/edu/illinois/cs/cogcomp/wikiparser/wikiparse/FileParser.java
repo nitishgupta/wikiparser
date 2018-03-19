@@ -11,6 +11,7 @@ import edu.illinois.cs.cogcomp.wikiparser.utils.FileUtils;
 import edu.illinois.cs.cogcomp.wikiparser.utils.Pair;
 import edu.illinois.cs.cogcomp.wikiparser.utils.ParserLogger;
 import edu.illinois.cs.cogcomp.wikiparser.wikiparse.JsonConverter;
+import edu.illinois.cs.cogcomp.wikiparser.unifiedParsing.resolveHyperlinks;
 
 /**
  *
@@ -222,6 +223,8 @@ public class FileParser implements Runnable {
             String doctext = cleanText2Offset.getFirst().toString();
 
             Map<List<Integer>, String> hyperlinks = cleanText2Offset.getSecond();
+            resolveHyperlinks solver = new resolveHyperlinks();
+            hyperlinks = solver.resolve(hyperlinks);
             WikiPage wp = new WikiPage();
             wp.setWikiPageFields(dataObj.getWikiTitle(), dataObj.getPageTitle(), dataObj.getId(), doctext, hyperlinks);
             return wp;
