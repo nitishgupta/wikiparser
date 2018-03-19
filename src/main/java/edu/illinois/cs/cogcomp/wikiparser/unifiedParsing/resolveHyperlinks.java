@@ -17,11 +17,11 @@ public class resolveHyperlinks {
     private String file = "/shared/preprocessed/wikiparser/unifiedParserOutput/RedirectTitle2ResolvedTitle.txt";
     private Set<String> resolvedTitles;
     private Map<String, String> redirectToResolved;
-    
+
     public resolveHyperlinks(){
         parseMap();
     }
-    
+
     private void parseMap(){
         resolvedTitles = new HashSet<String>();
         redirectToResolved = new HashMap<String, String>();
@@ -44,7 +44,7 @@ public class resolveHyperlinks {
             System.exit(-1);
         }
     }
-    
+
     public Map<List<Integer>, String> resolve(Map<List<Integer>, String> hyperlinks){
         Set<List<Integer>> keys = hyperlinks.keySet();
         for(List<Integer> i : keys){
@@ -57,32 +57,33 @@ public class resolveHyperlinks {
                 // Checks if # is present
                 int idx = title.indexOf('#');
                 if(idx != -1){
-                    title = title.substring(0, idx);
-                    if(resolvedTitles.contains(title)){
-                        continue;
-                    } else if(redirectToResolved.containsKey(title)){
-                        hyperlinks.replace(i, redirectToResolved.get(title));
+                    String shortened_title = title.substring(0, idx);
+                    if(resolvedTitles.contains(shortened_title)){
+                        hyperlinks.replace(i, shortened_title);
+                    } else if(redirectToResolved.containsKey(shortened_title)){
+                        hyperlinks.replace(i, redirectToResolved.get(shortened_title));
                     }
                 } else{
                     // Capitalizes first letter
-                    title = title.substring(0, 1).toUpperCase() + title.substring(1);
+                    String cap_title = title.substring(0, 1).toUpperCase() + title.substring(1);
                     // Capitalizes all letters directly succeeding '_'
-                    for(int c = 1; c < title.length(); c++){
-                        if(title.charAt(c) == '_'){
-                            if(c + 1 < title.length()){
-                                title = title.substring(0,c+1) + title.substring(c+1,c+1).toUpperCase() + title.substring(c+2);
+                    for(int c = 1; c < cap_title.length(); c++){
+                        if(cap_title.charAt(c) == '_'){
+                            if(c + 1 < cap_title.length()){
+                                cap_title = cap_title.substring(0,c+1) + cap_title.substring(c+1,c+1).toUpperCase();
+                                if(c + 2 < cap_title.length()) cap_title += title.substring(c+2);
                             }
                         }
                     }
-                    if(resolvedTitles.contains(title)){
-                        continue;
+                    if(resolvedTitles.contains(cap_title)){
+                        hyperlinks.replace(i, cap_title);
                     } else if(redirectToResolved.containsKey(title)){
-                        hyperlinks.replace(i, redirectToResolved.get(title));
+                        hyperlinks.replace(i, redirectToResolved.get(cap_title));
                     }
                 }
             }
         }
-        
+
         return hyperlinks;
     }
 }

@@ -11,6 +11,7 @@ import java.util.logging.Logger;
 import java.util.logging.SimpleFormatter;
 import edu.illinois.cs.cogcomp.wikiparser.utils.ParserLogger;
 import edu.illinois.cs.cogcomp.wikiparser.wikiparse.JsonConverter;
+import edu.illinois.cs.cogcomp.wikiparser.unifiedParsing.resolveHyperlinks;
 
 /**
  * This class receives as input the output of the python parser which is a folder of folder
@@ -24,6 +25,7 @@ public class WikiExtractParser {
     public String outputDir;
     private FileHandler fh;
     private ThreadPoolExecutor parser = null;
+    private resolveHyperlinks solver;
 
     public WikiExtractParser() {
         parser = getBoundedThreadPool();
@@ -62,16 +64,18 @@ public class WikiExtractParser {
             String outfilepath = outputDir + "/tmp" + Integer.toString(totalFiles) + ".ser";
             logger.log.info("Parsing Wiki Text " + Integer.toString(totalFiles));
             // Give this to thread runner
-            parser.execute(new FileParser(infilepath, outputDir, logger.log));
+            parser.execute(new FileParser(infilepath, outputDir, logger.log, solver));
         }
         logger.log.info("Total Files: " + Integer.toString(totalFiles));
         System.out.println("[#] Total Files: " + totalFiles);
     }
 
     public static void main(String [] args){
+        resolveHyperlinks solver = new resolveHyperlinks();
         WikiExtractParser wikiparser = new WikiExtractParser();
         wikiparser.wikiDirectory = args[0];
         wikiparser.outputDir = args[1];
+        wikiparser.solver = solver;
         wikiparser.extractWiki();
     }
 }

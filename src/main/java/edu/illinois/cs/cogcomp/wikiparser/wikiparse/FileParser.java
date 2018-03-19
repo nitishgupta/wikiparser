@@ -66,11 +66,13 @@ public class FileParser implements Runnable {
     private static Logger logger;
     public String infile;
     public String outfile;
+    public resolveHyperlinks solver;
 
-    public FileParser(String infile, String outfile, Logger logger){
+    public FileParser(String infile, String outfile, Logger logger, resolveHyperlinks solver){
         this.logger = logger;
         this.infile = infile;
         this.outfile = outfile;
+        this.solver = solver;
     }
 
     private static String decodeURL(String url) throws UnsupportedEncodingException {
@@ -223,7 +225,6 @@ public class FileParser implements Runnable {
             String doctext = cleanText2Offset.getFirst().toString();
 
             Map<List<Integer>, String> hyperlinks = cleanText2Offset.getSecond();
-            resolveHyperlinks solver = new resolveHyperlinks();
             hyperlinks = solver.resolve(hyperlinks);
             WikiPage wp = new WikiPage();
             wp.setWikiPageFields(dataObj.getWikiTitle(), dataObj.getPageTitle(), dataObj.getId(), doctext, hyperlinks);
