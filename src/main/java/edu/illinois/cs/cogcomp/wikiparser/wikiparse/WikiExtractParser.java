@@ -68,6 +68,10 @@ public class WikiExtractParser {
         }
         logger.log.info("Total Files: " + Integer.toString(totalFiles));
         System.out.println("[#] Total Files: " + totalFiles);
+        while(parser.getActiveCount() > 0){
+          // wait
+        }
+        resolveHyperlinks.writeUnresolvedTitles();
     }
 
     public static void main(String [] args){

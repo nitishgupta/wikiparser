@@ -15,6 +15,8 @@ import java.nio.file.Path;
  */
 public class resolveHyperlinks {
     private String file = "/shared/preprocessed/wikiparser/unifiedParserOutput/RedirectTitle2ResolvedTitle.txt";
+    private static String unresolvedOutput = "/shared/preprocessed/wikiparser/unifiedParserOutput/unresolvedHyperlinks.txt";
+    private static Set<String> unresolvedTitles = new HashSet<String>();
     private Set<String> resolvedTitles;
     private Map<String, String> redirectToResolved;
 
@@ -45,6 +47,22 @@ public class resolveHyperlinks {
         }
     }
 
+    public static void writeUnresolvedTitles(){
+      File unresolvedFile = new File(unresolvedOutput);
+      try{
+          FileWriter fw = new FileWriter(unresolvedFile.getAbsoluteFile());
+          BufferedWriter bw = new BufferedWriter(fw);
+          for(String title : unresolvedTitles){
+              bw.write(title + "\n");
+          }
+          bw.close();
+      }
+      catch (IOException e){
+          e.printStackTrace();
+          System.exit(-1);
+      }
+    }
+
     public Map<List<Integer>, String> resolve(Map<List<Integer>, String> hyperlinks){
         Set<List<Integer>> keys = hyperlinks.keySet();
         for(List<Integer> i : keys){
@@ -66,6 +84,13 @@ public class resolveHyperlinks {
                 } else{
                     // Capitalizes first letter
                     String cap_title = title.substring(0, 1).toUpperCase() + title.substring(1);
+                    if(resolvedTitles.contains(cap_title)){
+                        hyperlinks.replace(i, cap_title);
+                        continue;
+                    } else if(redirectToResolved.containsKey(title)){
+                        hyperlinks.replace(i, redirectToResolved.get(cap_title));
+                        continue;
+                    }
                     // Capitalizes all letters directly succeeding '_'
                     for(int c = 1; c < cap_title.length(); c++){
                         if(cap_title.charAt(c) == '_'){
@@ -79,6 +104,8 @@ public class resolveHyperlinks {
                         hyperlinks.replace(i, cap_title);
                     } else if(redirectToResolved.containsKey(title)){
                         hyperlinks.replace(i, redirectToResolved.get(cap_title));
+                    } else{
+                      unresolvedTitles.add(title);
                     }
                 }
             }
