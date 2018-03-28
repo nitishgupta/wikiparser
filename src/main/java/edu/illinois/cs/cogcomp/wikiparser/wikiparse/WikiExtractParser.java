@@ -12,6 +12,7 @@ import java.util.logging.SimpleFormatter;
 import edu.illinois.cs.cogcomp.wikiparser.utils.ParserLogger;
 import edu.illinois.cs.cogcomp.wikiparser.wikiparse.JsonConverter;
 import edu.illinois.cs.cogcomp.wikiparser.unifiedParsing.resolveHyperlinks;
+import edu.illinois.cs.cogcomp.wikiparser.unifiedParsing.KB;
 
 /**
  * This class receives as input the output of the python parser which is a folder of folder
@@ -75,6 +76,9 @@ public class WikiExtractParser {
     }
 
     public static void main(String [] args){
+        KB.loadCurIdsMap();
+        KB.loadNonListMap();
+        KB.loadRedirectTitle2ResolvedTitleMap();
         resolveHyperlinks solver = new resolveHyperlinks();
         WikiExtractParser wikiparser = new WikiExtractParser();
         wikiparser.wikiDirectory = args[0];
