@@ -31,8 +31,8 @@ public class JsonConverter {
     public static synchronized void ConvertToJson(List<WikiPage> objects){
         ObjectMapper mapper = new ObjectMapper();
         String json;
-        try{
-            for(int idx = 0; idx < objects.size(); idx++){
+        for(int idx = 0; idx < objects.size(); idx++){
+            try{
                 if(count % limit == 0 || currentFileName == null){
                     fileNumber++;
                     currentFileName = fileName + String.valueOf(fileNumber) + ".json";
@@ -44,9 +44,9 @@ public class JsonConverter {
                 json = mapper.writeValueAsString(obj);
                 fileOut.write(json + "\n"); // Writes each object to a new line
                 count++;
+            } catch (IOException e){
+                e.printStackTrace();
             }
-        } catch (IOException e){
-            e.printStackTrace();
         }
     }
     
