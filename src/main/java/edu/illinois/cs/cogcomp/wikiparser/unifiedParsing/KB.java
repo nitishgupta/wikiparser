@@ -20,6 +20,7 @@ public class KB {
 
     public static void loadRedirectTitle2ResolvedTitleMap(){
         // Parses resCurId2Redirects.tsv
+        System.out.println("Loading RedirectTitle2ResolvedTitleMap");
         resolvedTitlesList = new HashSet<String>();
         RedirectTitle2ResolvedTitleMap = new HashMap();
         lowerCaseTitles2actualTitles = new HashMap();
@@ -42,7 +43,7 @@ public class KB {
                         String lowerCaseResolvedTitle = resolvedTitle.toLowerCase();
 
                         // Stores lower case version of RedirectTitle
-                        Set<String> actualTitles = lowerCaseTitles2actualTitles.get(lowerCaseRedirectTitle);
+                        /*Set<String> actualTitles = lowerCaseTitles2actualTitles.get(lowerCaseRedirectTitle);
                         if(actualTitles == null){
                           actualTitles = new HashSet<String>();
                         }
@@ -55,7 +56,7 @@ public class KB {
                           actualTitles = new HashSet<String>();
                         }
                         actualTitles.add(resolvedTitle);
-                        lowerCaseTitles2actualTitles.replace(lowerCaseResolvedTitle, actualTitles);
+                        lowerCaseTitles2actualTitles.replace(lowerCaseResolvedTitle, actualTitles);*/
                     }
                 }
             }
@@ -68,6 +69,7 @@ public class KB {
 
     public static void loadCurIdsMap(){
         // Parses curIds2Title.tsv
+        System.out.println("Loading curIds2TitleMap");
         curIds2TitleMap = new HashMap();
         try{
             String line;
@@ -85,6 +87,7 @@ public class KB {
 
     public static void loadNonListMap(){
         // Parses resCurIdNonDisambig2ResTitle_nonList.tsv
+        System.out.println("Loading nonListMap");
         nonListMap = new HashMap();
         try{
             String line;
