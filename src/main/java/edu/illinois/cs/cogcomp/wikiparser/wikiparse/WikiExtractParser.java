@@ -1,17 +1,14 @@
 package edu.illinois.cs.cogcomp.wikiparser.wikiparse;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.*;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.FileHandler;
-import java.util.logging.Logger;
-import java.util.logging.SimpleFormatter;
+
 import edu.illinois.cs.cogcomp.wikiparser.utils.ParserLogger;
-import edu.illinois.cs.cogcomp.wikiparser.wikiparse.JsonConverter;
-import edu.illinois.cs.cogcomp.wikiparser.unifiedParsing.resolveHyperlinks;
+import edu.illinois.cs.cogcomp.wikiparser.unifiedParsing.ResolveHyperlinks;
 import edu.illinois.cs.cogcomp.wikiparser.unifiedParsing.KB;
 
 /**
@@ -42,17 +39,17 @@ public class WikiExtractParser {
                                         coreCount, // Pool Max
                                         60, TimeUnit.SECONDS, // Thread keep alive time
                                         new ArrayBlockingQueue<Runnable>(coreCount),// Queue
-                                        new ThreadPoolExecutor.CallerRunsPolicy()// Blocking mechanism
+                                        new ThreadPoolExecutor.CallerRunsPolicy()// Blocking mechanismlogger
         );
         executor.allowCoreThreadTimeOut(true);
         return executor;
     }
 
-    public void extractWiki(){
+    public void extractWiki() {
         // Dir path to parsed Wikipedia. This dir contains multiple nested dirs with multiple files.
         File inDir = new File(wikiDirectory);
         // This dir will replicate the dir/file structure in 'inDir'.
-	Iterator<File> i = org.apache.commons.io.FileUtils.iterateFiles(inDir, null, true);
+	    Iterator<File> i = org.apache.commons.io.FileUtils.iterateFiles(inDir, null, true);
         JsonConverter.setOutputDir(this.outputDir);
         int totalFiles = 0;
         logger.log.info("Starting to Parse Wiki Texts");
@@ -61,26 +58,30 @@ public class WikiExtractParser {
             totalFiles ++;
             File file = i.next();
             String infilepath = file.toString();
-            String outfilepath = outputDir + "/tmp" + Integer.toString(totalFiles) + ".ser";
+            // String outfilepath = outputDir + "/tmp" + Integer.toString(totalFiles) + ".ser";
             logger.log.info("Parsing Wiki Text " + Integer.toString(totalFiles));
             // Give this to thread runner
-            parser.execute(new FileParser(infilepath, outputDir, logger.log, new resolveHyperlinks()));
+            parser.execute(new FileParser(infilepath, outputDir, logger.log, new ResolveHyperlinks()));
         }
+
         logger.log.info("Total Files: " + Integer.toString(totalFiles));
         System.out.println("[#] Total Files: " + totalFiles);
-        while(parser.getActiveCount() > 0){
+        while (parser.getActiveCount() > 0) {
           // wait
         }
-        resolveHyperlinks.writeUnresolvedTitles();
+        JsonConverter.closeFile();
+        // ResolveHyperlinks.writeUnresolvedTitles();
     }
 
-    public static void main(String [] args){
+    public static void main(String [] args) {
         KB.loadCurIdsMap();
-        KB.loadNonListMap();
+        KB.loadResolvedCurIdsMap();
         KB.loadRedirectTitle2ResolvedTitleMap();
+        // System.exit(0);
+
         WikiExtractParser wikiparser = new WikiExtractParser();
-        wikiparser.wikiDirectory = args[0];
-        wikiparser.outputDir = args[1];
+        wikiparser.wikiDirectory = args[0];   // Dir contain wikiextrator output
+        wikiparser.outputDir = args[1];   // Output Dir for json output
         wikiparser.extractWiki();
     }
 }

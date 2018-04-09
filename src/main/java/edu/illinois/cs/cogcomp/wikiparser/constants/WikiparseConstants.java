@@ -9,6 +9,6 @@ public class WikiparseConstants {
     public static final String resCurIdNonDisambig2ResTitlePath = "/shared/preprocessed/wikiparser/unifiedParserOutput/resCurIdNonDisambig2ResTitle_nonList.tsv";
     public static final String resCurId2RedirectsPath = "/shared/preprocessed/wikiparser/unifiedParserOutput/resCurId2Redirects.tsv";
 
-    // File paths for resolveHyperlinks class
+    // File paths for ResolveHyperlinks class
     public static final String unresolvedOutput = "/shared/preprocessed/wikiparser/unifiedParserOutput/unresolvedHyperlinks.txt";
 }

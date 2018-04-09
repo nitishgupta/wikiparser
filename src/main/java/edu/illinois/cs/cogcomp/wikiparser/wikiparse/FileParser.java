@@ -9,9 +9,7 @@ import java.util.regex.Pattern;
 
 import edu.illinois.cs.cogcomp.wikiparser.utils.FileUtils;
 import edu.illinois.cs.cogcomp.wikiparser.utils.Pair;
-import edu.illinois.cs.cogcomp.wikiparser.utils.ParserLogger;
-import edu.illinois.cs.cogcomp.wikiparser.wikiparse.JsonConverter;
-import edu.illinois.cs.cogcomp.wikiparser.unifiedParsing.resolveHyperlinks;
+import edu.illinois.cs.cogcomp.wikiparser.unifiedParsing.ResolveHyperlinks;
 
 /**
  *
@@ -32,14 +30,14 @@ public class FileParser implements Runnable {
         private Integer curId;  // Integer ID that is unique to every wikipedia page
         private String text; // This contains the text and hyperlinks of a document
 
-        public DataFields(){
+        public DataFields() {
             this.wikiTitle = null;
             this.pageTitle = null;
             this.text = null;
             this.curId = null;
         }
 
-        public DataFields(String wikiTitle, String pageTitle, Integer curId, String text){
+        public DataFields(String wikiTitle, String pageTitle, Integer curId, String text) {
             this.wikiTitle = wikiTitle;
             this.pageTitle = pageTitle;
             this.curId = curId;
@@ -66,13 +64,13 @@ public class FileParser implements Runnable {
     private static Logger logger;
     public String infile;
     public String outfile;
-    public resolveHyperlinks solver;
+    public ResolveHyperlinks solver;
 
-    public FileParser(String infile, String outfile, Logger logger, resolveHyperlinks solver){
+    public FileParser(String infile, String outfile, Logger logger, ResolveHyperlinks hyperlinkResolver){
         this.logger = logger;
         this.infile = infile;
         this.outfile = outfile;
-        this.solver = solver;
+        this.solver = hyperlinkResolver;
     }
 
     private static String decodeURL(String url) throws UnsupportedEncodingException {
@@ -92,37 +90,77 @@ public class FileParser implements Runnable {
         return text;
     }
 
-    private String[] _cleanHyperLink(String string) {
+    private synchronized String[] _cleanHyperLink(String string) {
         /**
         * Input : <a href="Grand%20Slam%20%28tennis%29">Grand Slam</a>
         * Output : String[] = [decode("Grand%20Slam%20%28tennis%29"), "Grand Slam"]
         *
         * If Url cannot be parsed, then output String[0] = null
         */
-       if(string == null || string.isEmpty() || string.length() < 7) return null;
-       else if(!string.substring(0,7).contains("<a href")) return null;
-       int len = string.length();
-       String urlCharCharSurface = string.substring(9, len - 4);  // Returns : url">surface
-       //urlCharCharSurface = removeSpecialCharacters(urlCharCharSurface);
-       String[] urlSurface = urlCharCharSurface.split("\">");
-       assert (urlSurface.length == 2);
-       String decodedUrl = "";
-       try {
+
+
+
+        if(string == null || string.isEmpty() || string.length() < 7) return null;
+        else if(!string.substring(0,7).contains("<a href")) return null;
+        int len = string.length();
+        String urlCharCharSurface = string.substring(9, len - 4);  // Returns : url">surface
+        //urlCharCharSurface = removeSpecialCharacters(urlCharCharSurface);
+
+        String[] urlSurface = urlCharCharSurface.split("\">");
+
+        // Cases like: <a href=""></a>
+        // Output will be empty string
+        if (urlSurface.length == 0) {
+            String[] urlSurfaceNew = new String[2];
+            urlSurfaceNew[0] = "";
+            urlSurfaceNew[1] = "";
+            urlSurface = urlSurfaceNew.clone();
+        }
+
+        // Cases like: <a href="75th%20meridian%20east"></a>
+        // Output will be empty string losing the link
+        if (urlSurface.length == 1) {
+            String[] urlSurfaceNew = new String[2];
+            urlSurfaceNew[0] = urlSurface[0];
+            urlSurfaceNew[1] = "";
+            urlSurface = urlSurfaceNew.clone();
+        }
+
+        // Rogue cases where the input text is ill-formatted.
+        // Output will be the string as it is containing rogue HTML markup
+        if (urlSurface.length > 2) {
+            String[] urlSurfaceNew = new String[2];
+            urlSurfaceNew[0] = "";
+            urlSurfaceNew[1] = string;
+            urlSurface = urlSurfaceNew.clone();
+//            System.out.println("File: " + this.infile + "  String: " + string);
+//            System.out.println(urlCharCharSurface + "  urlSurface size: " + urlSurface.length);
+//            for(String urlS : urlSurface) {
+//                System.out.print(urlS + " : ");
+//            }
+//            System.out.println("\n");
+        }
+
+        assert (urlSurface.length == 2);
+
+        String decodedUrl = "";
+        try {
                decodedUrl = decodeURL(urlSurface[0]);
                decodedUrl = removeSpecialCharacters(decodedUrl);
                urlSurface[0] = null;
                urlSurface[0] = decodedUrl;
-       } catch (Exception e) {
-               logger.severe("File : " + infile);
-               logger.severe("Input : " + urlCharCharSurface);
-               logger.severe("Exception: " + e.toString());
-               logger.severe("URL Parsing failed : " + urlSurface[0]);
-       }
-
-       return urlSurface;
+        } catch (Exception e) {
+            logger.severe("File : " + infile);
+            logger.severe("Input : " + urlCharCharSurface);
+            logger.severe("Exception: " + e.toString());
+            logger.severe("URL Parsing failed : " + urlSurface[0]);
+            urlSurface[0] = "";
+            return urlSurface;
+        }
+        return urlSurface;
     }
 
-    private String getDocText(String [] lines){
+    private String getDocText(String [] lines) {
         /**
          * Helper function to convert all of the lines
          * in a single article to a single string
@@ -152,26 +190,27 @@ public class FileParser implements Runnable {
         *                 the paragraphs are kept as they are and are separated by an empty line.
         */
         StringBuilder cleanText = new StringBuilder();
-	Map<List<Integer>, String> offsets2Title = new HashMap();
-        Pattern linkPattern = Pattern.compile("(<a[^>]+>.+?</a>)",  Pattern.CASE_INSENSITIVE|Pattern.DOTALL);
+	    Map<List<Integer>, String> offsets2Title = new HashMap();
+        //Pattern linkPattern = Pattern.compile("(<a[^>]+>.*?</a>)",  Pattern.CASE_INSENSITIVE|Pattern.DOTALL);
+        Pattern linkPattern = Pattern.compile("<a href=[^>]+>.*?</a>",  Pattern.CASE_INSENSITIVE|Pattern.DOTALL);
         if(markedupText == null){  // if text is null, do not attempt to find patterns.  It will lead to a null pointer exception
             return new Pair<StringBuilder,Map<List<Integer>, String>>(cleanText, offsets2Title);
         }
-	Matcher matcher = linkPattern.matcher(markedupText);
+	    Matcher matcher = linkPattern.matcher(markedupText);
         int len = markedupText.length();
         int oldStart = 0;
         int start = 0;
-        while(matcher.find()){
+        while(matcher.find()) {
             start = matcher.start();
             cleanText.append(markedupText.substring(oldStart, start));
             String[] urlSurface = _cleanHyperLink(matcher.group());
-            if(urlSurface == null || urlSurface.length < 2) continue;
-            if (urlSurface[0] != null) {
+            if (urlSurface[0].length() >= 1 && urlSurface[1].length() > 0) {
                 List<Integer> offsets = new ArrayList();
                 offsets.add(cleanText.length());
-                offsets.add(cleanText.length()+urlSurface[1].length());
+                offsets.add(cleanText.length() + urlSurface[1].length());
                 offsets2Title.put(offsets, urlSurface[0]);
             }
+
             cleanText.append(urlSurface[1]);
             oldStart = matcher.end();
         }
@@ -180,7 +219,7 @@ public class FileParser implements Runnable {
         return new Pair<StringBuilder,Map<List<Integer>, String>>(cleanText, offsets2Title);
     }
 
-    public DataFields getFields(String doc){
+    public DataFields getFields(String doc) {
         /*
             Helper function to get required data from
             a single document and creates a temporary
@@ -211,29 +250,34 @@ public class FileParser implements Runnable {
         return new DataFields(wikiTitle, pageTitle, curId, text);
     }
 
-    public WikiPage parseDoc(String doc){
-        /*
-            Helper function to create a WikiPage
-            object from a single document
-        */
+    public WikiPage parseDoc(String doc) {
+        // Function to create a WikiPage object from a single document as text
+
         if (!doc.trim().isEmpty()){
             DataFields dataObj = getFields(doc);
-            if(dataObj == null) return null;  // Returns null if the wikipage is to be excluded.  This includes List pages.
+            if(dataObj == null) {
+                return null;  // Returns null if the wikipage is to be excluded.  This includes List pages.
+            }
 
             // Gets Text and internal hyperlinks
             Pair<StringBuilder, Map<List<Integer>, String>> cleanText2Offset = cleanDocText(dataObj.getText());
             String doctext = cleanText2Offset.getFirst().toString();
+            Map<List<Integer>, String> hyperlinksMap = cleanText2Offset.getSecond();
 
-            Map<List<Integer>, String> hyperlinks = cleanText2Offset.getSecond();
-            hyperlinks = solver.resolve(hyperlinks);
+            // For all hyperlinks, resolve them to the "Resolved nonDisambig nonList" list of wikiTitles
+            hyperlinksMap = ResolveHyperlinks.resolveHyperlinkMap(hyperlinksMap);
+
             WikiPage wp = new WikiPage();
-            wp.setWikiPageFields(dataObj.getWikiTitle(), dataObj.getPageTitle(), dataObj.getId(), doctext, hyperlinks);
+            wp.setWikiPageFields(dataObj.getWikiTitle(), dataObj.getPageTitle(), dataObj.getId(),
+                                 doctext, hyperlinksMap);
             return wp;
         }
-        else return null;
+        else {
+            return null;
+        }
     }
 
-    public static String[] breakDocs(String filename){
+    public static String[] breakDocs(String filename) {
         /**
          * Takes the name of the file to parse as input
          * Returns: an array of documents as strings
@@ -243,37 +287,37 @@ public class FileParser implements Runnable {
         if(text == null) return null;
 
         String [] docs = text.split("</doc>");
-        return docs;
+        // Removing last empty document
+        String[] removedLastDocs = Arrays.copyOf(docs, docs.length - 1);
+
+        return removedLastDocs;
     }
 
-    public List<WikiPage> parseFile(String filename){
-        /*
-            This breaks an entire file into multiple docs and parses
-            them to get the required data.  It returns a list of wikipage
-            objects from the file
-        */
-        List<WikiPage> data = new ArrayList();
+    public List<WikiPage> parseFile(String filename) {
+        // This breaks an entire file into multiple docs and parses
+        // them to get the required data.  It returns a list of wikipage
+        // objects from the file
+        List<WikiPage> wikipages = new ArrayList();
         String [] docs = breakDocs(filename);
-        if(docs == null) return data;
+
+        if(docs == null) return wikipages;
+        logger.info(filename + "  Num of original docs: " + docs.length);
+
         for(int i = 0; i < docs.length; i++){
             String doc = docs[i];
             WikiPage wp = parseDoc(doc);
             if(wp != null) { // This can be null when the datafield object created from a single document is null
-                data.add(wp);
+                wikipages.add(wp);
             }
         }
+        logger.info(filename + "  Num of parsed docs: " + wikipages.size());
 
-        return data;
+        return wikipages;
     }
 
-    public void run(){
-        try{
-            List<WikiPage> res = parseFile(this.infile);
-            JsonConverter.ConvertToJson(res);
-        }catch(Exception e){
-            logger.severe("Wiki Parsing failed : \nInFile : " + infile + " \nOutfile : " + outfile);
-            logger.severe("Exception: " + e.toString());
-        }
+    public void run() {
+        // System.out.println(this.infile);
+        List<WikiPage> res = parseFile(this.infile);
+        JsonConverter.ConvertToJson(res);
     }
-
 }

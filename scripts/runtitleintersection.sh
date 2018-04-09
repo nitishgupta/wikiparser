@@ -4,4 +4,4 @@
 # Third argument: File path to desired output file
 
 mvn clean compile
-mvn exec:java -Dexec.mainClass="edu.illinois.cs.cogcomp.wikiparser.unifiedParsing.titleIntersection" -Dexec.args="$1 $2 $3"
+mvn exec:java -Dexec.mainClass="edu.illinois.cs.cogcomp.wikiparser.unifiedParsing.TitleIntersection" -Dexec.args="$1 $2 $3"

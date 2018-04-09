@@ -41,6 +41,6 @@ public class FileUtils {
     }
     
     public static String readFileToString(String filename) {
-	return getTextFromFile(filename, "UTF8");
+	return getTextFromFile(filename, "UTF-8");
     }
 }

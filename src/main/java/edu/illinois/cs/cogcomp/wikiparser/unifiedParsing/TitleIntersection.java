@@ -13,7 +13,7 @@ import java.io.FileWriter;
  *  and the wikiextractor output and writes them to the designated
  *  output file
  */
-public class titleIntersection {
+public class TitleIntersection {
     private String wikiExtractorOutput;
     private String jwplOutput;
     private String outputFile;
@@ -21,7 +21,7 @@ public class titleIntersection {
     private Map<String, String> wikiextractorTitleMap;
     private Map<String, String> outputMap;
 
-    public titleIntersection(String wikiExtractorOutput, String jwplOutput, String outputFile){
+    public TitleIntersection(String wikiExtractorOutput, String jwplOutput, String outputFile){
         this.wikiExtractorOutput = wikiExtractorOutput;
         this.jwplOutput = jwplOutput;
         this.outputFile = outputFile;
@@ -86,7 +86,7 @@ public class titleIntersection {
     }
 
     public static void main(String[] args){
-        titleIntersection intersect = new titleIntersection(args[0], args[1], args[2]);
+        TitleIntersection intersect = new TitleIntersection(args[0], args[1], args[2]);
         intersect.getIntersection();
     }
 }

@@ -3,4 +3,4 @@
 # Second argument: File path to output directory
 
 mvn clean compile
-mvn exec:java -Dexec.mainClass="edu.illinois.cs.cogcomp.wikiparser.unifiedParsing.copyFiles" -Dexec.args="$1 $2"
+mvn exec:java -Dexec.mainClass="edu.illinois.cs.cogcomp.wikiparser.unifiedParsing.CopyFiles" -Dexec.args="$1 $2"

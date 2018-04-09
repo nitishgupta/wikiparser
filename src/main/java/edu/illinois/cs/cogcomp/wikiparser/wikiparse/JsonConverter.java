@@ -3,6 +3,8 @@ package edu.illinois.cs.cogcomp.wikiparser.wikiparse;
 import edu.illinois.cs.cogcomp.wikiparser.ds.WikiPage;
 import java.util.*;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.json.JSONObject;
+
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -28,25 +30,40 @@ public class JsonConverter {
         fileName = file.toString();
     }
     
-    public static synchronized void ConvertToJson(List<WikiPage> objects){
+    public static synchronized void ConvertToJson(List<WikiPage> objects) {
         ObjectMapper mapper = new ObjectMapper();
         String json;
         for(int idx = 0; idx < objects.size(); idx++){
             try{
-                if(count % limit == 0 || currentFileName == null){
+                if (count % limit == 0 || currentFileName == null) {
                     fileNumber++;
                     currentFileName = fileName + String.valueOf(fileNumber) + ".json";
                     System.out.println("Writing to " + currentFileName);
-                    if(fileOut != null) fileOut.close(); // Closes current file stream
+                    if(fileOut != null) {
+                        fileOut.close(); // Closes current file stream
+                    }
                     fileOut = new FileWriter(currentFileName);
+                    // fileOut.write("{" + "\n");
                 }
                 WikiPage obj = objects.get(idx);
                 json = mapper.writeValueAsString(obj);
-                fileOut.write(json + "\n"); // Writes each object to a new line
+                JSONObject jsonobj = new JSONObject(json); // Convert text to object
+                String jsonStr = jsonobj.toString();
+                fileOut.write(jsonStr + "\n"); // Writes each object to a new line
                 count++;
-            } catch (IOException e){
+            } catch (IOException e) {
                 e.printStackTrace();
             }
+        }
+    }
+
+    public static void closeFile() {
+        try {
+            if (fileOut != null) {
+                fileOut.close();
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
     

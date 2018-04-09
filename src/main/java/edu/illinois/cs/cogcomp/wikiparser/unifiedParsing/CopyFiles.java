@@ -15,13 +15,13 @@ import edu.illinois.cs.cogcomp.wikiparser.constants.JWPLConstants;
  * This class reads curIds2Title.tsv and resCurId2Redirects.tsv from 
  * an input directory and copies them to a specified directory
  */
-public class copyFiles {
+public class CopyFiles {
     private String inputDir;
     private String outputDir;
     private Map<String, String> idMap;
     private Map<String, String> redirectMap;
     
-    public copyFiles(String inputDir, String outputDir){
+    public CopyFiles(String inputDir, String outputDir){
         this.inputDir = inputDir;
         this.outputDir = outputDir;
         idMap = new HashMap<String, String>();
@@ -86,7 +86,7 @@ public class copyFiles {
     public static void main(String[] args){
         String inputDir = args[0];
         String outputDir = args[1];
-        copyFiles cf = new copyFiles(inputDir, outputDir);
+        CopyFiles cf = new CopyFiles(inputDir, outputDir);
         cf.copy();
     }
 }
