@@ -217,7 +217,6 @@ public class PageMapLineParser {
                     curidsToTitles.put(id, pageTitle);
                 } else {
                     System.out.println("curidsToTitles already contains duplicate curid: " + id);
-                    System.exit(0);
                 }
             }
             fileReader.close();
