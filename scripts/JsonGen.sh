@@ -15,5 +15,5 @@ PACKAGE_PREFIX="edu.illinois.cs.cogcomp"
 MAIN="$PACKAGE_PREFIX.wikiparser.wikiparse.WikiExtractParser"
 
 mvn compile
-time nice java -Dfile.encoding=UTF-8 $OPTIONS $MAIN $1 $2
+time nice java -Dfile.encoding=UTF-8 $OPTIONS $MAIN $1 $2 $3
 

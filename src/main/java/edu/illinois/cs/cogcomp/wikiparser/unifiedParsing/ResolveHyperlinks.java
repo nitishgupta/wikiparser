@@ -119,7 +119,7 @@ public class ResolveHyperlinks {
         return null;
     }
 
-    public static Map<List<Integer>, String> resolveHyperlinkMap(Map<List<Integer>, String> hyperlinks){
+    public static Map<List<Integer>, String> resolveHyperlinkMap(Map<List<Integer>, String> hyperlinks) {
         Set<List<Integer>> keys = hyperlinks.keySet();
         for(List<Integer> i : keys){
             String title = hyperlinks.get(i);
@@ -137,6 +137,8 @@ public class ResolveHyperlinks {
     }
 
     public static void main(String [] args) {
+        String unifiedParserOutputDir = args[0];
+        KB.setFilePaths(unifiedParserOutputDir);
         KB.loadCurIdsMap();
         KB.loadResolvedCurIdsMap();
         KB.loadRedirectTitle2ResolvedTitleMap();

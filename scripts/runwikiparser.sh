@@ -3,4 +3,4 @@
 # Second argument: File path of desired output for the java wiki parser
 
 mvn clean compile
-mvn exec:java -Dexec.mainClass="edu.illinois.cs.cogcomp.wikiparser.wikiparse.WikiExtractParser" -Dexec.args="$1 $2"
+mvn exec:java -Dexec.mainClass="edu.illinois.cs.cogcomp.wikiparser.wikiparse.WikiExtractParser" -Dexec.args="$1 $2 $3"

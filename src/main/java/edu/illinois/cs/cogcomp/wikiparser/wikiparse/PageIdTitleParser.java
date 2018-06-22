@@ -1,7 +1,7 @@
 package edu.illinois.cs.cogcomp.wikiparser.wikiparse;
 
-import edu.illinois.cs.cogcomp.wikiparser.utils.FileUtils;
-import edu.illinois.cs.cogcomp.wikiparser.constants.WikiparseConstants;
+import edu.illinois.cs.cogcomp.wikiparser.constants.JWPLConstants;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.*;
@@ -10,9 +10,9 @@ import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.FileHandler;
 import java.util.logging.Logger;
-import java.util.logging.SimpleFormatter;
+
 import edu.illinois.cs.cogcomp.wikiparser.utils.ParserLogger;
-import static edu.illinois.cs.cogcomp.wikiparser.wikiparse.WikiExtractParser.getBoundedThreadPool;
+
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.UnsupportedEncodingException;
@@ -66,7 +66,7 @@ public class PageIdTitleParser implements Runnable{
         return text;
     }
 
-    public void ParseDoc(String doc){
+    public void parseDoc(String doc){
         /*
          * This function parses the document and and gets the page Id and page Title
         */
@@ -106,9 +106,9 @@ public class PageIdTitleParser implements Runnable{
         }
     }
 
-    public void writeToFiles(){
+    public void writeToFiles() {
         // Writes id to title map to file
-        Path filePath = Paths.get(outputDir, WikiparseConstants.PageIdTitleOutput);
+        Path filePath = Paths.get(outputDir, JWPLConstants.curId2Title);
         File file = new File(filePath.toString());
         logger.info("Writing to output file");
             try{
@@ -131,12 +131,12 @@ public class PageIdTitleParser implements Runnable{
         // Dir path to parsed Wikipedia. This dir contains multiple nested dirs with multiple files.
         File inDir = new File(inputDir);
         // This dir will replicate the dir/file structure in 'inDir'.
-	Iterator<File> i = org.apache.commons.io.FileUtils.iterateFiles(inDir, null, true);
+	    Iterator<File> i = org.apache.commons.io.FileUtils.iterateFiles(inDir, null, true);
 
         int totalFiles = 0;
         logger.info("Starting to Parse Wiki Texts");
         // Reads all of the files in the given directory
-        while(i.hasNext()){
+        while(i.hasNext()) {
             totalFiles ++;
             File file = i.next();
             String infilepath = file.toString();
@@ -148,7 +148,7 @@ public class PageIdTitleParser implements Runnable{
             }
             for(int idx = 0; idx < docs.length; idx++){
                 String doc = docs[idx];
-                ParseDoc(doc);
+                parseDoc(doc);
             }
         }
         logger.info("Total Files: " + Integer.toString(totalFiles));
@@ -166,7 +166,7 @@ public class PageIdTitleParser implements Runnable{
         }
     }
 
-    public static void main(String [] args){
+    public static void main(String [] args) {
         ThreadPoolExecutor parser = getBoundedThreadPool();
         String inputDir = args[0], outputDir = args[1];
         ParserLogger logger = new ParserLogger("PageIdTitleParser");

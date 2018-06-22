@@ -74,14 +74,18 @@ public class WikiExtractParser {
     }
 
     public static void main(String [] args) {
+
+        String unifiedParserOutputDir = args[0];
+        KB.setFilePaths(unifiedParserOutputDir);
         KB.loadCurIdsMap();
         KB.loadResolvedCurIdsMap();
         KB.loadRedirectTitle2ResolvedTitleMap();
         // System.exit(0);
 
         WikiExtractParser wikiparser = new WikiExtractParser();
-        wikiparser.wikiDirectory = args[0];   // Dir contain wikiextrator output
-        wikiparser.outputDir = args[1];   // Output Dir for json output
+        wikiparser.wikiDirectory = args[1];   // Dir contain wikiextrator output
+        wikiparser.outputDir = args[2];   // Output Dir for json output
         wikiparser.extractWiki();
+
     }
 }

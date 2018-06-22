@@ -35,7 +35,7 @@ public class CopyFiles {
             File file = new File(filePath.toString());
             FileWriter fw = new FileWriter(file.getAbsoluteFile());
             BufferedWriter bw = new BufferedWriter(fw);
-            for(String id : idMap.keySet()){
+            for(String id : idMap.keySet()) {
               String PageTitle = idMap.get(id);
               bw.write(id + "\t" + PageTitle + "\n"); // Each page exists on a new line
             }
@@ -56,7 +56,7 @@ public class CopyFiles {
         }
     }
     
-    public void copy(){
+    public void copy() {
         // Parses input files
         String line;
         try{

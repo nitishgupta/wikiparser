@@ -9,6 +9,8 @@ import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.nio.file.Paths;
 import java.nio.file.Path;
+
+import edu.illinois.cs.cogcomp.wikiparser.constants.JWPLConstants;
 import edu.illinois.cs.cogcomp.wikiparser.constants.WikiparseConstants;
 
 public class KB {
@@ -22,6 +24,25 @@ public class KB {
     public static Map<String, String> RedirectTitle2ResolvedTitleMap = null;
     // public static Set<String> resolvedTitlesList = null;
 
+    public static String resCurId2RedirectsPath = null;
+    public static String resCurIdNonDisambig2ResTitlePath = null;
+    public static String curIds2TitleMapPath = null;
+
+
+    public static void setFilePaths(String unifiedParserOutputDir) {
+        KB.resCurId2RedirectsPath = Paths.get(unifiedParserOutputDir, JWPLConstants.resCurId2Redirects).toString();
+        KB.resCurIdNonDisambig2ResTitlePath = Paths.get(unifiedParserOutputDir, JWPLConstants.resCurIdNonDisambig2ResTitle_nonList).toString();
+        KB.curIds2TitleMapPath = Paths.get(unifiedParserOutputDir, JWPLConstants.curId2Title).toString();
+    }
+
+
+    public static void setFilePaths(String resCurId2RedirectsPath, String resCurIdNonDisambig2ResTitlePath,
+                                    String curIds2TitleMapPath) {
+        KB.resCurId2RedirectsPath = resCurId2RedirectsPath;
+        KB.resCurIdNonDisambig2ResTitlePath = resCurIdNonDisambig2ResTitlePath;
+        KB.curIds2TitleMapPath = curIds2TitleMapPath;
+    }
+
 
     public static void loadRedirectTitle2ResolvedTitleMap() {
         System.out.println("# Loading RedirectTitle2ResolvedTitleMap");
@@ -32,14 +53,14 @@ public class KB {
         }
     }
 
-    public static void _loadRedirectTitle2ResolvedTitleMap(){
+    public static void _loadRedirectTitle2ResolvedTitleMap() {
         // Parses resCurId2Redirects.tsv
 
         // resolvedTitlesList = new HashSet<String>();
         RedirectTitle2ResolvedTitleMap = new HashMap();
         try{
             String line;
-            BufferedReader reader = new BufferedReader(new FileReader(WikiparseConstants.resCurId2RedirectsPath));
+            BufferedReader reader = new BufferedReader(new FileReader(resCurId2RedirectsPath));
             while((line = reader.readLine()) != null){
                 String [] columns = line.split("\t");
                 String [] redirects = columns[1].split(" ");
@@ -95,7 +116,7 @@ public class KB {
         resTitle2curId = new HashMap();
         try{
             String line;
-            BufferedReader reader = new BufferedReader(new FileReader(WikiparseConstants.resCurIdNonDisambig2ResTitlePath));
+            BufferedReader reader = new BufferedReader(new FileReader(resCurIdNonDisambig2ResTitlePath));
             while((line = reader.readLine()) != null){
                 String [] columns = line.split("\t");
                 resCurId2Title.put(columns[0], columns[1]);
@@ -125,7 +146,7 @@ public class KB {
         curIds2TitleMap = new HashMap();
         try{
             String line;
-            BufferedReader reader = new BufferedReader(new FileReader(WikiparseConstants.curIds2TitleMapPath));
+            BufferedReader reader = new BufferedReader(new FileReader(curIds2TitleMapPath));
             while((line = reader.readLine()) != null){
                 String [] columns = line.split("\t");
                 curIds2TitleMap.put(columns[0], columns[1]);

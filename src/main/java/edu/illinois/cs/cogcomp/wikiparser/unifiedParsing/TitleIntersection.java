@@ -85,7 +85,12 @@ public class TitleIntersection {
       System.out.println("Done computing intersection");
     }
 
-    public static void main(String[] args){
+    public static void main(String[] args) {
+        // args
+        // 0: WikiExtractor curId2Title - filepath
+        // 1: Jwpl resCurIdNonDisambig2ResTitle_nonList.tsv
+        // 2: unifiedParserOutput/resCurIdNonDisambig2ResTitle_nonList.tsv
+
         TitleIntersection intersect = new TitleIntersection(args[0], args[1], args[2]);
         intersect.getIntersection();
     }
