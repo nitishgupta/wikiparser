@@ -63,13 +63,11 @@ public class FileParser implements Runnable {
 
     private static Logger logger;
     public String infile;
-    public String outfile;
     public ResolveHyperlinks solver;
 
-    public FileParser(String infile, String outfile, Logger logger, ResolveHyperlinks hyperlinkResolver){
+    public FileParser(String infile, Logger logger, ResolveHyperlinks hyperlinkResolver){
         this.logger = logger;
         this.infile = infile;
-        this.outfile = outfile;
         this.solver = hyperlinkResolver;
     }
 

@@ -8,8 +8,11 @@ import org.json.JSONObject;
 
 
 import java.io.IOException;
+import java.io.OutputStreamWriter;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.io.FileOutputStream;
 import java.io.FileWriter;
 
 /**
@@ -24,7 +27,7 @@ public class JsonConverter {
     private static String currentFileName = null;
     private static int count = 0;
     private static int fileNumber = 0;
-    private static FileWriter fileOut = null;
+    private static OutputStreamWriter fileOut = null;
     
     public static void setOutputDir(String directory){
         outputDir = directory;
@@ -44,8 +47,8 @@ public class JsonConverter {
                     if(fileOut != null) {
                         fileOut.close(); // Closes current file stream
                     }
-                    fileOut = new FileWriter(currentFileName);
-                    // fileOut.write("{" + "\n");
+                    fileOut = new OutputStreamWriter(new FileOutputStream(currentFileName), 
+                        StandardCharsets.UTF_8);
                 }
                 WikiPage obj = objects.get(idx);
                 json = mapper.writeValueAsString(obj);
