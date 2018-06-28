@@ -35,6 +35,9 @@ public class DataMachine {
     public static void main(String [] args){
         System.out.println("Running JWPL DataMachine parser to generate 11 output files");
         String jwplInputDir = args[0];
+        
+        // language can be passed as an argument now, default to english.
+        String language = args.length > 1 ? args[1] : "english";
         String jwplOutputDir = Paths.get(jwplInputDir, "output").toString();
         File f = new File(jwplOutputDir);
         ParserLogger logger = new ParserLogger("DataMachine");
@@ -45,7 +48,7 @@ public class DataMachine {
         if(!f.exists()){  // Runs DataMachine if output folder does not exist
            try{
                logger.log.info("Running JWPL DataMachine");
-               runDM(jwplInputDir);
+               runDM(jwplInputDir, language);
            } catch(Exception e){
                logger.log.severe("Exception: " + e.toString());
            }
@@ -55,12 +58,12 @@ public class DataMachine {
         logger.log.info("DataMachine done");
     }
     
-    public static void runDM(String jwplInputDir) throws Exception {
+    public static void runDM(String jwplInputDir, String language) throws Exception {
         System.setProperty("jdk.xml.totalEntitySizeLimit", "500000000");
         SAXParserFactory spf = SAXParserFactory.newInstance();
         spf.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, false);
         // Path where wiki dump is stored.
-        String[] args = {"english", "Contents", "Disambiguation_pages", jwplInputDir};
+        String[] args = {language, "Contents", "Disambiguation_pages", jwplInputDir};
         System.out.println("Running JWPL Datamachine");
         JWPLDataMachine.main(args);
     }

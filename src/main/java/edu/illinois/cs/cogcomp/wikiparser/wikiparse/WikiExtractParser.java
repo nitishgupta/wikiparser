@@ -61,7 +61,7 @@ public class WikiExtractParser {
             // String outfilepath = outputDir + "/tmp" + Integer.toString(totalFiles) + ".ser";
             logger.log.info("Parsing Wiki Text " + Integer.toString(totalFiles));
             // Give this to thread runner
-            parser.execute(new FileParser(infilepath, outputDir, logger.log, new ResolveHyperlinks()));
+            parser.execute(new FileParser(infilepath, logger.log, new ResolveHyperlinks()));
         }
 
         logger.log.info("Total Files: " + Integer.toString(totalFiles));
